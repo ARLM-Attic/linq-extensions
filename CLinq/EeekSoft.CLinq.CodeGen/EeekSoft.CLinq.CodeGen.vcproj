@@ -5,6 +5,10 @@
 	Name="EeekSoft.CLinq.CodeGen"
 	ProjectGUID="{0109F0AB-188B-4C8A-9922-3AADCF3B9CB1}"
 	RootNamespace="EeekSoftCLinqCodeGen"
+	SccProjectName="SAK"
+	SccAuxPath="SAK"
+	SccLocalPath="SAK"
+	SccProvider="SAK"
 	Keyword="ManagedCProj"
 	>
 	<Platforms>

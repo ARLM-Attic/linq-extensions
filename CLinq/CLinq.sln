@@ -837,6 +837,27 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EeekSoft.CLinq.Includes", "
 	EndProjectSection
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs02.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = EeekSoft.CLinq.Demo\\EeekSoft.CLinq.Demo.vcproj
+		SccProjectName1 = EeekSoft.CLinq.Demo
+		SccLocalPath1 = EeekSoft.CLinq.Demo
+		SccProjectUniqueName2 = EeekSoft.CLinq.CodeGen\\EeekSoft.CLinq.CodeGen.vcproj
+		SccProjectName2 = EeekSoft.CLinq.CodeGen
+		SccLocalPath2 = EeekSoft.CLinq.CodeGen
+		SccProjectUniqueName3 = EeekSoft.CLinq.XsltUtil\\EeekSoft.CLinq.XsltUtil.vcproj
+		SccProjectName3 = EeekSoft.CLinq.XsltUtil
+		SccLocalPath3 = EeekSoft.CLinq.XsltUtil
+		SccProjectUniqueName4 = EeekSoft.CLinq\\EeekSoft.CLinq.vcproj
+		SccProjectName4 = EeekSoft.CLinq
+		SccLocalPath4 = EeekSoft.CLinq
+		SccProjectUniqueName5 = EeekSoft.CLinq.Includes\\EeekSoft.CLinq.Includes.vcproj
+		SccProjectName5 = EeekSoft.CLinq.Includes
+		SccLocalPath5 = EeekSoft.CLinq.Includes
+	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1
 	EndGlobalSection

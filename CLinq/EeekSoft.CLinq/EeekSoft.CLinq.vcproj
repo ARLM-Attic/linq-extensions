@@ -5,6 +5,10 @@
 	Name="EeekSoft.CLinq"
 	ProjectGUID="{94C69968-A9F2-4BA3-8E52-0F58024C3E07}"
 	RootNamespace="EeekSoftCLinq"
+	SccProjectName="SAK"
+	SccAuxPath="SAK"
+	SccLocalPath="SAK"
+	SccProvider="SAK"
 	Keyword="ManagedCProj"
 	>
 	<Platforms>
