@@ -1,0 +1,359 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="northwind" Class="Northwind">
+  <Schema Name="dbo" Property="dbo" Class="Dbo">
+    <Table Name="Orders">
+      <Column Name="OrderID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsIdentity="true" IsAutoGen="true" IsReadOnly="false" Precision="10" Scale="255" />
+      <Column Name="CustomerID" Type="System.String" DbType="NChar(5)" StringLength="5" />
+      <Column Name="EmployeeID" Type="System.Int32" DbType="Int" Nullable="true" Precision="10" Scale="255" />
+      <Column Name="OrderDate" Type="System.DateTime" DbType="DateTime" Nullable="true" />
+      <Column Name="RequiredDate" Type="System.DateTime" DbType="DateTime" Nullable="true" />
+      <Column Name="ShippedDate" Type="System.DateTime" DbType="DateTime" Nullable="true" />
+      <Column Name="ShipVia" Type="System.Int32" DbType="Int" Nullable="true" Precision="10" Scale="255" />
+      <Column Name="Freight" Type="System.Decimal" DbType="Money" Nullable="true" Precision="19" Scale="255" />
+      <Column Name="ShipName" Type="System.String" DbType="NVarChar(40)" StringLength="40" />
+      <Column Name="ShipAddress" Type="System.String" DbType="NVarChar(60)" StringLength="60" />
+      <Column Name="ShipCity" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="ShipRegion" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="ShipPostalCode" Type="System.String" DbType="NVarChar(10)" StringLength="10" />
+      <Column Name="ShipCountry" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Association Name="FK_Order_Details_Orders" Property="OrderDetails" Kind="ManyToOneChild" Target="Order Details">
+        <Column Name="OrderID" />
+      </Association>
+      <Association Name="FK_Orders_Customers" Property="Customers" Kind="ManyToOneParent" Target="Customers">
+        <Column Name="CustomerID" />
+      </Association>
+      <Association Name="FK_Orders_Employees" Property="Employees" Kind="ManyToOneParent" Target="Employees">
+        <Column Name="EmployeeID" />
+      </Association>
+      <Association Name="FK_Orders_Shippers" Property="Shippers" Kind="ManyToOneParent" Target="Shippers">
+        <Column Name="ShipVia" />
+      </Association>
+      <PrimaryKey Name="PK_Orders">
+        <Column Name="OrderID" />
+      </PrimaryKey>
+      <Index Name="PK_Orders" Style="CLUSTERED" IsUnique="true">
+        <Column Name="OrderID" />
+      </Index>
+      <Index Name="CustomerID" Style="NONCLUSTERED">
+        <Column Name="CustomerID" />
+      </Index>
+      <Index Name="CustomersOrders" Style="NONCLUSTERED">
+        <Column Name="CustomerID" />
+      </Index>
+      <Index Name="EmployeeID" Style="NONCLUSTERED">
+        <Column Name="EmployeeID" />
+      </Index>
+      <Index Name="EmployeesOrders" Style="NONCLUSTERED">
+        <Column Name="EmployeeID" />
+      </Index>
+      <Index Name="OrderDate" Style="NONCLUSTERED">
+        <Column Name="OrderDate" />
+      </Index>
+      <Index Name="ShippedDate" Style="NONCLUSTERED">
+        <Column Name="ShippedDate" />
+      </Index>
+      <Index Name="ShippersOrders" Style="NONCLUSTERED">
+        <Column Name="ShipVia" />
+      </Index>
+      <Index Name="ShipPostalCode" Style="NONCLUSTERED">
+        <Column Name="ShipPostalCode" />
+      </Index>
+    </Table>
+    <Table Name="Products">
+      <Column Name="ProductID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsIdentity="true" IsAutoGen="true" IsReadOnly="false" Precision="10" Scale="255" />
+      <Column Name="ProductName" Type="System.String" DbType="NVarChar(40) NOT NULL" Nullable="false" StringLength="40" />
+      <Column Name="SupplierID" Type="System.Int32" DbType="Int" Nullable="true" Precision="10" Scale="255" />
+      <Column Name="CategoryID" Type="System.Int32" DbType="Int" Nullable="true" Precision="10" Scale="255" />
+      <Column Name="QuantityPerUnit" Type="System.String" DbType="NVarChar(20)" StringLength="20" />
+      <Column Name="UnitPrice" Type="System.Decimal" DbType="Money" Nullable="true" Precision="19" Scale="255" />
+      <Column Name="UnitsInStock" Type="System.Int16" DbType="SmallInt" Nullable="true" Precision="5" Scale="255" />
+      <Column Name="UnitsOnOrder" Type="System.Int16" DbType="SmallInt" Nullable="true" Precision="5" Scale="255" />
+      <Column Name="ReorderLevel" Type="System.Int16" DbType="SmallInt" Nullable="true" Precision="5" Scale="255" />
+      <Column Name="Discontinued" Type="System.Boolean" DbType="Bit NOT NULL" />
+      <Association Name="FK_Order_Details_Products" Property="OrderDetails" Kind="ManyToOneChild" Target="Order Details">
+        <Column Name="ProductID" />
+      </Association>
+      <Association Name="FK_Products_Categories" Property="Categories" Kind="ManyToOneParent" Target="Categories">
+        <Column Name="CategoryID" />
+      </Association>
+      <Association Name="FK_Products_Suppliers" Property="Suppliers" Kind="ManyToOneParent" Target="Suppliers">
+        <Column Name="SupplierID" />
+      </Association>
+      <PrimaryKey Name="PK_Products">
+        <Column Name="ProductID" />
+      </PrimaryKey>
+      <Index Name="PK_Products" Style="CLUSTERED" IsUnique="true">
+        <Column Name="ProductID" />
+      </Index>
+      <Index Name="CategoriesProducts" Style="NONCLUSTERED">
+        <Column Name="CategoryID" />
+      </Index>
+      <Index Name="CategoryID" Style="NONCLUSTERED">
+        <Column Name="CategoryID" />
+      </Index>
+      <Index Name="ProductName" Style="NONCLUSTERED">
+        <Column Name="ProductName" />
+      </Index>
+      <Index Name="SupplierID" Style="NONCLUSTERED">
+        <Column Name="SupplierID" />
+      </Index>
+      <Index Name="SuppliersProducts" Style="NONCLUSTERED">
+        <Column Name="SupplierID" />
+      </Index>
+    </Table>
+    <Table Name="Order Details" Property="OrderDetails" Class="OrderDetails">
+      <Column Name="OrderID" Type="System.Int32" DbType="Int NOT NULL" IsIdentity="true" Precision="10" Scale="255" />
+      <Column Name="ProductID" Type="System.Int32" DbType="Int NOT NULL" IsIdentity="true" Precision="10" Scale="255" />
+      <Column Name="UnitPrice" Type="System.Decimal" DbType="Money NOT NULL" Precision="19" Scale="255" />
+      <Column Name="Quantity" Type="System.Int16" DbType="SmallInt NOT NULL" Precision="5" Scale="255" />
+      <Column Name="Discount" Type="System.Single" DbType="Real NOT NULL" Precision="7" Scale="255" />
+      <Association Name="FK_Order_Details_Orders" Property="Orders" Kind="ManyToOneParent" Target="Orders">
+        <Column Name="OrderID" />
+      </Association>
+      <Association Name="FK_Order_Details_Products" Property="Products" Kind="ManyToOneParent" Target="Products">
+        <Column Name="ProductID" />
+      </Association>
+      <PrimaryKey Name="PK_Order_Details">
+        <Column Name="OrderID" />
+        <Column Name="ProductID" />
+      </PrimaryKey>
+      <Index Name="PK_Order_Details" Style="CLUSTERED" IsUnique="true">
+        <Column Name="OrderID" />
+        <Column Name="ProductID" />
+      </Index>
+      <Index Name="OrderID" Style="NONCLUSTERED">
+        <Column Name="OrderID" />
+      </Index>
+      <Index Name="OrdersOrder_Details" Style="NONCLUSTERED">
+        <Column Name="OrderID" />
+      </Index>
+      <Index Name="ProductID" Style="NONCLUSTERED">
+        <Column Name="ProductID" />
+      </Index>
+      <Index Name="ProductsOrder_Details" Style="NONCLUSTERED">
+        <Column Name="ProductID" />
+      </Index>
+    </Table>
+    <Table Name="CustomerCustomerDemo">
+      <Column Name="CustomerID" Type="System.String" DbType="NChar(5) NOT NULL" Nullable="false" IsIdentity="true" StringLength="5" />
+      <Column Name="CustomerTypeID" Type="System.String" DbType="NChar(10) NOT NULL" Nullable="false" IsIdentity="true" StringLength="10" />
+      <Association Name="FK_CustomerCustomerDemo" Property="CustomerDemographics" Kind="ManyToOneParent" Target="CustomerDemographics">
+        <Column Name="CustomerTypeID" />
+      </Association>
+      <Association Name="FK_CustomerCustomerDemo_Customers" Property="Customers" Kind="ManyToOneParent" Target="Customers">
+        <Column Name="CustomerID" />
+      </Association>
+      <PrimaryKey Name="PK_CustomerCustomerDemo">
+        <Column Name="CustomerID" />
+        <Column Name="CustomerTypeID" />
+      </PrimaryKey>
+      <Index Name="PK_CustomerCustomerDemo" Style="NONCLUSTERED" IsUnique="true">
+        <Column Name="CustomerID" />
+        <Column Name="CustomerTypeID" />
+      </Index>
+    </Table>
+    <Table Name="CustomerDemographics">
+      <Column Name="CustomerTypeID" Type="System.String" DbType="NChar(10) NOT NULL" Nullable="false" IsIdentity="true" StringLength="10" />
+      <Column Name="CustomerDesc" Type="System.String" DbType="NText" UpdateCheck="Never" StringLength="1073741823" />
+      <Association Name="FK_CustomerCustomerDemo" Property="CustomerCustomerDemo" Kind="ManyToOneChild" Target="CustomerCustomerDemo">
+        <Column Name="CustomerTypeID" />
+      </Association>
+      <PrimaryKey Name="PK_CustomerDemographics">
+        <Column Name="CustomerTypeID" />
+      </PrimaryKey>
+      <Index Name="PK_CustomerDemographics" Style="NONCLUSTERED" IsUnique="true">
+        <Column Name="CustomerTypeID" />
+      </Index>
+    </Table>
+    <Table Name="Region">
+      <Column Name="RegionID" Type="System.Int32" DbType="Int NOT NULL" IsIdentity="true" Precision="10" Scale="255" />
+      <Column Name="RegionDescription" Type="System.String" DbType="NChar(50) NOT NULL" Nullable="false" StringLength="50" />
+      <Association Name="FK_Territories_Region" Property="Territories" Kind="ManyToOneChild" Target="Territories">
+        <Column Name="RegionID" />
+      </Association>
+      <PrimaryKey Name="PK_Region">
+        <Column Name="RegionID" />
+      </PrimaryKey>
+      <Index Name="PK_Region" Style="NONCLUSTERED" IsUnique="true">
+        <Column Name="RegionID" />
+      </Index>
+    </Table>
+    <Table Name="Territories">
+      <Column Name="TerritoryID" Type="System.String" DbType="NVarChar(20) NOT NULL" Nullable="false" IsIdentity="true" StringLength="20" />
+      <Column Name="TerritoryDescription" Type="System.String" DbType="NChar(50) NOT NULL" Nullable="false" StringLength="50" />
+      <Column Name="RegionID" Type="System.Int32" DbType="Int NOT NULL" Precision="10" Scale="255" />
+      <Association Name="FK_EmployeeTerritories_Territories" Property="EmployeeTerritories" Kind="ManyToOneChild" Target="EmployeeTerritories">
+        <Column Name="TerritoryID" />
+      </Association>
+      <Association Name="FK_Territories_Region" Property="Region" Kind="ManyToOneParent" Target="Region">
+        <Column Name="RegionID" />
+      </Association>
+      <PrimaryKey Name="PK_Territories">
+        <Column Name="TerritoryID" />
+      </PrimaryKey>
+      <Index Name="PK_Territories" Style="NONCLUSTERED" IsUnique="true">
+        <Column Name="TerritoryID" />
+      </Index>
+    </Table>
+    <Table Name="EmployeeTerritories">
+      <Column Name="EmployeeID" Type="System.Int32" DbType="Int NOT NULL" IsIdentity="true" Precision="10" Scale="255" />
+      <Column Name="TerritoryID" Type="System.String" DbType="NVarChar(20) NOT NULL" Nullable="false" IsIdentity="true" StringLength="20" />
+      <Association Name="FK_EmployeeTerritories_Employees" Property="Employees" Kind="ManyToOneParent" Target="Employees">
+        <Column Name="EmployeeID" />
+      </Association>
+      <Association Name="FK_EmployeeTerritories_Territories" Property="Territories" Kind="ManyToOneParent" Target="Territories">
+        <Column Name="TerritoryID" />
+      </Association>
+      <PrimaryKey Name="PK_EmployeeTerritories">
+        <Column Name="EmployeeID" />
+        <Column Name="TerritoryID" />
+      </PrimaryKey>
+      <Index Name="PK_EmployeeTerritories" Style="NONCLUSTERED" IsUnique="true">
+        <Column Name="EmployeeID" />
+        <Column Name="TerritoryID" />
+      </Index>
+    </Table>
+    <Table Name="Employees">
+      <Column Name="EmployeeID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsIdentity="true" IsAutoGen="true" IsReadOnly="false" Precision="10" Scale="255" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(20) NOT NULL" Nullable="false" StringLength="20" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(10) NOT NULL" Nullable="false" StringLength="10" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(30)" StringLength="30" />
+      <Column Name="TitleOfCourtesy" Type="System.String" DbType="NVarChar(25)" StringLength="25" />
+      <Column Name="BirthDate" Type="System.DateTime" DbType="DateTime" Nullable="true" />
+      <Column Name="HireDate" Type="System.DateTime" DbType="DateTime" Nullable="true" />
+      <Column Name="Address" Type="System.String" DbType="NVarChar(60)" StringLength="60" />
+      <Column Name="City" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="Region" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="PostalCode" Type="System.String" DbType="NVarChar(10)" StringLength="10" />
+      <Column Name="Country" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="HomePhone" Type="System.String" DbType="NVarChar(24)" StringLength="24" />
+      <Column Name="Extension" Type="System.String" DbType="NVarChar(4)" StringLength="4" />
+      <Column Name="Photo" Type="System.Byte[]" DbType="Image" UpdateCheck="Never" />
+      <Column Name="Notes" Type="System.String" DbType="NText" UpdateCheck="Never" StringLength="1073741823" />
+      <Column Name="ReportsTo" Type="System.Int32" DbType="Int" Nullable="true" Precision="10" Scale="255" />
+      <Column Name="PhotoPath" Type="System.String" DbType="NVarChar(255)" StringLength="255" />
+      <Association Name="FK_Employees_Employees" Property="ReportsToEmployees" Kind="ManyToOneParent" Target="Employees">
+        <Column Name="ReportsTo" />
+      </Association>
+      <Association Name="FK_Employees_Employees" Property="Employee" Kind="ManyToOneChild" Target="Employees">
+        <Column Name="EmployeeID" />
+      </Association>
+      <Association Name="FK_EmployeeTerritories_Employees" Property="EmployeeTerritories" Kind="ManyToOneChild" Target="EmployeeTerritories">
+        <Column Name="EmployeeID" />
+      </Association>
+      <Association Name="FK_Orders_Employees" Property="Orders" Kind="ManyToOneChild" Target="Orders">
+        <Column Name="EmployeeID" />
+      </Association>
+      <PrimaryKey Name="PK_Employees">
+        <Column Name="EmployeeID" />
+      </PrimaryKey>
+      <Index Name="PK_Employees" Style="CLUSTERED" IsUnique="true">
+        <Column Name="EmployeeID" />
+      </Index>
+      <Index Name="LastName" Style="NONCLUSTERED">
+        <Column Name="LastName" />
+      </Index>
+      <Index Name="PostalCode" Style="NONCLUSTERED">
+        <Column Name="PostalCode" />
+      </Index>
+    </Table>
+    <Table Name="Categories">
+      <Column Name="CategoryID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsIdentity="true" IsAutoGen="true" IsReadOnly="false" Precision="10" Scale="255" />
+      <Column Name="CategoryName" Type="System.String" DbType="NVarChar(15) NOT NULL" Nullable="false" StringLength="15" />
+      <Column Name="Description" Type="System.String" DbType="NText" UpdateCheck="Never" StringLength="1073741823" />
+      <Column Name="Picture" Type="System.Byte[]" DbType="Image" UpdateCheck="Never" />
+      <Association Name="FK_Products_Categories" Property="Products" Kind="ManyToOneChild" Target="Products">
+        <Column Name="CategoryID" />
+      </Association>
+      <PrimaryKey Name="PK_Categories">
+        <Column Name="CategoryID" />
+      </PrimaryKey>
+      <Index Name="PK_Categories" Style="CLUSTERED" IsUnique="true">
+        <Column Name="CategoryID" />
+      </Index>
+      <Index Name="CategoryName" Style="NONCLUSTERED">
+        <Column Name="CategoryName" />
+      </Index>
+    </Table>
+    <Table Name="Customers">
+      <Column Name="CustomerID" Type="System.String" DbType="NChar(5) NOT NULL" Nullable="false" IsIdentity="true" StringLength="5" />
+      <Column Name="CompanyName" Type="System.String" DbType="NVarChar(40) NOT NULL" Nullable="false" StringLength="40" />
+      <Column Name="ContactName" Type="System.String" DbType="NVarChar(30)" StringLength="30" />
+      <Column Name="ContactTitle" Type="System.String" DbType="NVarChar(30)" StringLength="30" />
+      <Column Name="Address" Type="System.String" DbType="NVarChar(60)" StringLength="60" />
+      <Column Name="City" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="Region" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="PostalCode" Type="System.String" DbType="NVarChar(10)" StringLength="10" />
+      <Column Name="Country" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="Phone" Type="System.String" DbType="NVarChar(24)" StringLength="24" />
+      <Column Name="Fax" Type="System.String" DbType="NVarChar(24)" StringLength="24" />
+      <Association Name="FK_CustomerCustomerDemo_Customers" Property="CustomerCustomerDemo" Kind="ManyToOneChild" Target="CustomerCustomerDemo">
+        <Column Name="CustomerID" />
+      </Association>
+      <Association Name="FK_Orders_Customers" Property="Orders" Kind="ManyToOneChild" Target="Orders">
+        <Column Name="CustomerID" />
+      </Association>
+      <PrimaryKey Name="PK_Customers">
+        <Column Name="CustomerID" />
+      </PrimaryKey>
+      <Index Name="PK_Customers" Style="CLUSTERED" IsUnique="true">
+        <Column Name="CustomerID" />
+      </Index>
+      <Index Name="City" Style="NONCLUSTERED">
+        <Column Name="City" />
+      </Index>
+      <Index Name="CompanyName" Style="NONCLUSTERED">
+        <Column Name="CompanyName" />
+      </Index>
+      <Index Name="PostalCode" Style="NONCLUSTERED">
+        <Column Name="PostalCode" />
+      </Index>
+      <Index Name="Region" Style="NONCLUSTERED">
+        <Column Name="Region" />
+      </Index>
+    </Table>
+    <Table Name="Shippers">
+      <Column Name="ShipperID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsIdentity="true" IsAutoGen="true" IsReadOnly="false" Precision="10" Scale="255" />
+      <Column Name="CompanyName" Type="System.String" DbType="NVarChar(40) NOT NULL" Nullable="false" StringLength="40" />
+      <Column Name="Phone" Type="System.String" DbType="NVarChar(24)" StringLength="24" />
+      <Association Name="FK_Orders_Shippers" Property="Orders" Kind="ManyToOneChild" Target="Orders">
+        <Column Name="ShipperID" />
+      </Association>
+      <PrimaryKey Name="PK_Shippers">
+        <Column Name="ShipperID" />
+      </PrimaryKey>
+      <Index Name="PK_Shippers" Style="CLUSTERED" IsUnique="true">
+        <Column Name="ShipperID" />
+      </Index>
+    </Table>
+    <Table Name="Suppliers">
+      <Column Name="SupplierID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsIdentity="true" IsAutoGen="true" IsReadOnly="false" Precision="10" Scale="255" />
+      <Column Name="CompanyName" Type="System.String" DbType="NVarChar(40) NOT NULL" Nullable="false" StringLength="40" />
+      <Column Name="ContactName" Type="System.String" DbType="NVarChar(30)" StringLength="30" />
+      <Column Name="ContactTitle" Type="System.String" DbType="NVarChar(30)" StringLength="30" />
+      <Column Name="Address" Type="System.String" DbType="NVarChar(60)" StringLength="60" />
+      <Column Name="City" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="Region" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="PostalCode" Type="System.String" DbType="NVarChar(10)" StringLength="10" />
+      <Column Name="Country" Type="System.String" DbType="NVarChar(15)" StringLength="15" />
+      <Column Name="Phone" Type="System.String" DbType="NVarChar(24)" StringLength="24" />
+      <Column Name="Fax" Type="System.String" DbType="NVarChar(24)" StringLength="24" />
+      <Column Name="HomePage" Type="System.String" DbType="NText" UpdateCheck="Never" StringLength="1073741823" />
+      <Association Name="FK_Products_Suppliers" Property="Products" Kind="ManyToOneChild" Target="Products">
+        <Column Name="SupplierID" />
+      </Association>
+      <PrimaryKey Name="PK_Suppliers">
+        <Column Name="SupplierID" />
+      </PrimaryKey>
+      <Index Name="PK_Suppliers" Style="CLUSTERED" IsUnique="true">
+        <Column Name="SupplierID" />
+      </Index>
+      <Index Name="CompanyName" Style="NONCLUSTERED">
+        <Column Name="CompanyName" />
+      </Index>
+      <Index Name="PostalCode" Style="NONCLUSTERED">
+        <Column Name="PostalCode" />
+      </Index>
+    </Table>
+  </Schema>
+</Database>

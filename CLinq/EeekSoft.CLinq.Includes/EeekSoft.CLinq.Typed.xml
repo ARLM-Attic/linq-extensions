@@ -1,0 +1,1043 @@
+<?xml version="1.0" encoding="utf-8"?>
+<typed>
+
+<!-- ******************************************************************* -->
+<!-- templates that can be included in other classes (ie. std. operators)-->
+<!-- ******************************************************************* -->
+  
+  <!-- common operators used in every number type ($TE = typed expression, $TR = real type parameter) -->
+  <template name="CommonMath">
+    <!-- operators - math -->
+    <operator name="+" type="Add" wtype="$TE" ntype="$TR,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Addition operator for tuple of $TE types." />
+    <operator name="*" type="Multiply" wtype="$TE" ntype="$TR,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Multiplication operator for tuple of $TE types." />
+    <operator name="/" type="Divide" wtype="$TE" ntype="$TR,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Division operator for tuple of $TE types." />
+    <operator name="-" type="Subtract" wtype="$TE" ntype="$TR,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Subtraction operator for tuple of $TE types." />
+    <!-- operators - logical -->
+    <operator name="==" type="EQ" wtype="Expr&lt;bool&gt;" ntype="bool,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="comparison operator for tuple of $TE types." />
+    <operator name="!=" type="EQ" wtype="Expr&lt;bool&gt;" ntype="bool,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Inequallity operator for tuple of $TE types." />
+    <operator name="&lt;" type="LT" wtype="Expr&lt;bool&gt;" ntype="bool,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Less than operator for tuple of $TE types." />
+    <operator name="&gt;" type="GT" wtype="Expr&lt;bool&gt;" ntype="bool,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Greather than operator for tuple of $TE types." />
+    <operator name="&lt;=" type="LE" wtype="Expr&lt;bool&gt;" ntype="bool,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Less or equals operator for tuple of $TE types." />
+    <operator name="&gt;=" type="GE" wtype="Expr&lt;bool&gt;" ntype="bool,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Greather or equals than operator for tuple of $TE types." />    
+  </template>
+
+  <tempalte name="CommonMath_Modulo">
+    <operator name="%" type="Modulo" wtype="$TE" ntype="$TR,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Modulo operator for tuple of $TE types." />
+  </tempalte>
+  
+  <template name="CommonMath_Shifts">
+    <operator name="&lt;&lt;" type="LShift" wtype="$TE" ntype="$TR,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Shift left operator for tuple of $TE types." />
+    <operator name="&gt;&gt;" type="RShift" wtype="$TE" ntype="$TR,$TR,$TR" arity="BinaryExpression" static="true" 
+              parameters="$TE left, $TE right" comment="Shift right operator for tuple of $TE types." />
+  </template>
+  
+<!-- ******************************************************************* -->
+<!-- wrapper classes for working with expressions of some specified type -->
+<!-- ******************************************************************* -->
+
+  <!-- ************************* BOOL ************************* -->
+  <wrapperClass type="bool" literal="true" 
+                comment="Template specialization for the 'bool' expresion. Implements operators !=, == and logical operators (&amp;amp;&amp;amp;, ||) and unary !.">
+    <!-- operators - logical -->
+    <operator name="!" type="Not" wtype="Expr&lt;bool&gt;" ntype="bool,bool" arity="UnaryExpression" static="true" 
+              parameters="Expr&lt;bool&gt; value" comment="Returns negation of the logical value." />
+    <operator name="==" type="EQ" wtype="Expr&lt;bool&gt;" ntype="bool,bool,bool" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;bool&gt; left, Expr&lt;bool&gt; right" comment="Test values for equality." />
+    <operator name="!=" type="NE" wtype="Expr&lt;bool&gt;" ntype="bool,bool,bool" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;bool&gt; left, Expr&lt;bool&gt; right" comment="Test values for inequality." />
+    <operator name="&amp;&amp;" type="And" wtype="Expr&lt;bool&gt;" ntype="bool,bool,bool" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;bool&gt; left, Expr&lt;bool&gt; right" comment="Performs logical 'and' operation." />
+    <operator name="||" type="Or" wtype="Expr&lt;bool&gt;" ntype="bool,bool,bool" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;bool&gt; left, Expr&lt;bool&gt; right" comment="Performs logical 'or' operation." />
+  </wrapperClass>
+
+  <!-- ******************* NULLABLE TYPES ******************** -->
+  <!-- ************************* DOUBLE ************************* -->
+  <wrapperClass type="Nullable&lt;double&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;double&gt;' expresion. Supports standard math and comparison operators.">
+    <include template="CommonMath" />
+  </wrapperClass>
+
+  <!-- ************************* FLOAT ************************* -->
+  <wrapperClass type="Nullable&lt;float&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;float&gt;' expresion. Supports standard math and comparison operators.">
+    <include template="CommonMath" />
+    <!--<conversion to="double" />-->
+  </wrapperClass>
+
+  <!-- ************************* DECIMAL ************************* -->
+  <wrapperClass type="Nullable&lt;System::Decimal&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;System::Decimal&gt;' expresion. Supports standard math and comparison operators.">
+    <include template="CommonMath" />
+  </wrapperClass>
+
+  <!-- ************************* LONG ************************* -->
+  <wrapperClass type="Nullable&lt;long long int&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;long long int&gt;' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+  </wrapperClass>
+
+  <!-- ************************* ULONG ************************* -->
+  <wrapperClass type="Nullable&lt;unsigned long long int&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;unsigned long long int&gt;' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+  </wrapperClass>
+
+  <!-- ************************* INT ************************* -->
+  <wrapperClass type="Nullable&lt;int&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;int&gt;' expresion. Supports standard math and comparison operators (including modulo and shifts).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <include template="CommonMath_Shifts" />
+    <!--<conversion to="long long int" />
+    <conversion to="unsigned long long int" />-->
+  </wrapperClass>
+
+  <!-- ************************* UINT ************************* -->
+  <wrapperClass type="Nullable&lt;unsigned int&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;unsigned int&gt;' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <!--<conversion to="long long int" />
+    <conversion to="unsigned long long int" />-->
+  </wrapperClass>
+
+  <!-- ************************* SHORT ************************* -->
+  <wrapperClass type="Nullable&lt;short&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;short&gt;' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <!--<conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+    <conversion to="int" />
+    <conversion to="unsigned int" />-->
+  </wrapperClass>
+
+  <!-- ************************* USHORT ************************* -->
+  <wrapperClass type="Nullable&lt;unsigned short&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;unsigned short&gt;' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <!--<conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+    <conversion to="int" />
+    <conversion to="unsigned int" />-->
+  </wrapperClass>
+
+  <!-- ************************* BYTE ************************* -->
+  <wrapperClass type="Nullable&lt;unsigned char&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;unsigned char&gt;' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <!--<conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+    <conversion to="int" />
+    <conversion to="unsigned int" />
+    <conversion to="short" />
+    <conversion to="unsigned short" />-->
+  </wrapperClass>
+
+  <!-- ************************* SBYTE ************************* -->
+  <wrapperClass type="Nullable&lt;signed char&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;signed char&gt;' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <!--<conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+    <conversion to="int" />
+    <conversion to="unsigned int" />
+    <conversion to="short" />
+    <conversion to="unsigned short" />-->
+  </wrapperClass>
+
+
+  <!-- ******************** STANDARD TYPES ********************** -->
+  <!-- ************************* DOUBLE ************************* -->
+  <wrapperClass type="double" literal="true"
+         comment="Template specialization for the 'double' expresion. Supports standard math and comparison operators.">
+    <include template="CommonMath" />
+  </wrapperClass>
+
+  <!-- ************************* FLOAT ************************* -->
+  <wrapperClass type="float" literal="true" 
+         comment="Template specialization for the 'float' expresion. Supports standard math and comparison operators.">
+    <include template="CommonMath" />
+    <conversion to="double" />
+  </wrapperClass>
+
+  <!-- ************************* DECIMAL ************************* -->
+  <wrapperClass type="System::Decimal" literal="true"
+         comment="Template specialization for the 'System::Decimal' expresion. Supports standard math and comparison operators.">
+    <include template="CommonMath" />
+  </wrapperClass>
+
+  <!-- ************************* LONG ************************* -->
+  <wrapperClass type="long long int" literal="true"
+         comment="Template specialization for the 'long long int' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+  </wrapperClass>
+
+  <!-- ************************* ULONG ************************* -->
+  <wrapperClass type="unsigned long long int" literal="true"
+         comment="Template specialization for the 'unsigned long long int' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+  </wrapperClass>
+  
+  <!-- ************************* INT ************************* -->
+  <wrapperClass type="int" literal="true"
+         comment="Template specialization for the 'int' expresion. Supports standard math and comparison operators (including modulo and shifts).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <include template="CommonMath_Shifts" />
+    <conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+  </wrapperClass>
+
+  <!-- ************************* UINT ************************* -->
+  <wrapperClass type="unsigned int" literal="true"
+         comment="Template specialization for the 'unsigned int' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+  </wrapperClass>
+  
+  <!-- ************************* SHORT ************************* -->
+  <wrapperClass type="short" literal="true" 
+         comment="Template specialization for the 'short' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+    <conversion to="int" />
+    <conversion to="unsigned int" />
+  </wrapperClass>
+
+  <!-- ************************* USHORT ************************* -->
+  <wrapperClass type="unsigned short" literal="true"
+         comment="Template specialization for the 'unsigned short' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+    <conversion to="int" />
+    <conversion to="unsigned int" />
+  </wrapperClass>
+
+  <!-- ************************* BYTE ************************* -->
+  <wrapperClass type="unsigned char" literal="true"
+         comment="Template specialization for the 'unsigned char' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+    <conversion to="int" />
+    <conversion to="unsigned int" />
+    <conversion to="short" />
+    <conversion to="unsigned short" />
+  </wrapperClass>
+
+  <!-- ************************* SBYTE ************************* -->
+  <wrapperClass type="signed char" literal="true"
+         comment="Template specialization for the 'signed char' expresion. Supports standard math and comparison operators (including modulo).">
+    <include template="CommonMath" />
+    <include template="CommonMath_Modulo" />
+    <conversion to="long long int" />
+    <conversion to="unsigned long long int" />
+    <conversion to="int" />
+    <conversion to="unsigned int" />
+    <conversion to="short" />
+    <conversion to="unsigned short" />
+  </wrapperClass>  
+
+  <!-- ************************* CHAR ************************* -->
+  <wrapperClass type="wchar_t" literal="true" 
+                comment="Template specialization for the 'wchar_t' expresion. Supports comparison operators.">
+    <!-- operators - logical -->
+    <operator name="==" type="EQ" wtype="Expr&lt;bool&gt;" ntype="bool,wchar_t,wchar_t" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;wchar_t&gt; left, Expr&lt;wchar_t&gt; right" comment="Test values for equality." />
+    <operator name="!=" type="NE" wtype="Expr&lt;bool&gt;" ntype="bool,wchar_t,wchar_t" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;wchar_t&gt; left, Expr&lt;wchar_t&gt; right" comment="Test values for inequality." />
+  </wrapperClass>
+
+  <!-- ************************* STRING ************************* -->
+  <wrapperClass type="String^" literal="true" 
+         comment="Template specialization for the 'String^' expresion. Support standard string operators and methods.">
+    <!-- operators -->
+    <operator name="+" type="Add" wtype="Expr&lt;String^&gt;" ntype="String^,String^,String^" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;String^&gt; left, Expr&lt;String^&gt; right" comment="Operator for string concatenation." />
+    <operator name="==" type="EQ" wtype="Expr&lt;bool&gt;" ntype="bool,String^,String^" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;String^&gt; left, Expr&lt;String^&gt; right" comment="comparison operator for tuple of Expr&lt;String^&gt; types." />
+    <operator name="!=" type="NE" wtype="Expr&lt;bool&gt;" ntype="bool,String^,String^" arity="BinaryExpression" static="true" 
+              parameters="Expr&lt;String^&gt; left, Expr&lt;String^&gt; right" comment="Inequallity operator for tuple of Expr&lt;String^&gt; types." />
+    <!-- member methods -->
+    <method name="Substring" parameters="Expr&lt;int&gt; startIndex" wtype="Expr&lt;String^&gt;" ntype="String^" 
+            comment="Retrieves a substring from this instance." />
+    <method name="Substring" parameters="Expr&lt;int&gt; startIndex, Expr&lt;int&gt; length" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Retrieves a substring from this instance." />
+    <method name="Contains" parameters="Expr&lt;String^&gt; value" wtype="Expr&lt;bool&gt;" ntype="bool"
+            comment="Returns a value indicating whether the specified String object occurs within this string." />
+    <method name="StartsWith" parameters="Expr&lt;String^&gt; value" wtype="Expr&lt;bool&gt;" ntype="bool"
+            comment="Determines whether the beginning of an instance of String matches a specified string." />
+    <method name="EndsWith" parameters="Expr&lt;String^&gt; value" wtype="Expr&lt;bool&gt;" ntype="bool"
+            comment="Determines whether the end of an instance of String matches a specified string." />
+    <method name="IndexOf" parameters="Expr&lt;wchar_t&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index of the first occurrence of a String, or one or more characters, within this string." />
+    <method name="IndexOf" parameters="Expr&lt;String^&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index of the first occurrence of a String, or one or more characters, within this string." />
+    <method name="IndexOf" parameters="Expr&lt;wchar_t&gt; value, Expr&lt;int&gt; startIndex" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index of the first occurrence of a String, or one or more characters, within this string." />
+    <method name="IndexOf" parameters="Expr&lt;String^&gt; value, Expr&lt;int&gt; startIndex" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index of the first occurrence of a String, or one or more characters, within this string." />
+    <method name="IndexOf" parameters="Expr&lt;wchar_t&gt; value, Expr&lt;int&gt; startIndex, Expr&lt;int&gt; count" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index of the first occurrence of a String, or one or more characters, within this string." />
+    <method name="IndexOf" parameters="Expr&lt;String^&gt; value, Expr&lt;int&gt; startIndex, Expr&lt;int&gt; count" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index of the first occurrence of a String, or one or more characters, within this string." />
+    <method name="LastIndexOf" parameters="Expr&lt;wchar_t&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index position of the last occurrence of a specified Unicode character or String within this instance." />
+    <method name="LastIndexOf" parameters="Expr&lt;String^&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index position of the last occurrence of a specified Unicode character or String within this instance." />
+    <method name="LastIndexOf" parameters="Expr&lt;wchar_t&gt; value, Expr&lt;int&gt; startIndex" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index position of the last occurrence of a specified Unicode character or String within this instance." />
+    <method name="LastIndexOf" parameters="Expr&lt;String^&gt; value, Expr&lt;int&gt; startIndex" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index position of the last occurrence of a specified Unicode character or String within this instance." />
+    <method name="LastIndexOf" parameters="Expr&lt;wchar_t&gt; value, Expr&lt;int&gt; startIndex, Expr&lt;int&gt; count" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index position of the last occurrence of a specified Unicode character or String within this instance." />
+    <method name="LastIndexOf" parameters="Expr&lt;String^&gt; value, Expr&lt;int&gt; startIndex, Expr&lt;int&gt; count" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Reports the index position of the last occurrence of a specified Unicode character or String within this instance." />
+    <method name="Insert" parameters="Expr&lt;int&gt; startIndex, Expr&lt;String^&gt; value" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Inserts a specified instance of String at a specified index position in this instance." />
+    <method name="Remove" parameters="Expr&lt;int&gt; startIndex" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Deletes a specified number of characters from this instance." />
+    <method name="Remove" parameters="Expr&lt;int&gt; startIndex, Expr&lt;int&gt; count" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Deletes a specified number of characters from this instance." />
+    <method name="Replace" parameters="Expr&lt;wchar_t&gt; oldChar, Expr&lt;wchar_t&gt; newChar" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Replaces all occurrences of a specified Unicode character or String in this instance, with another specified Unicode character or String." />
+    <method name="Replace" parameters="Expr&lt;String^&gt; oldValue, Expr&lt;String^&gt; newValue" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Replaces all occurrences of a specified Unicode character or String in this instance, with another specified Unicode character or String." />
+    <method name="Trim" parameters="" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Removes all leading and trailing occurrences of a set of specified characters from the current String object." />
+    <method name="ToLower" parameters="" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Returns a copy of this String converted to lowercase." />
+    <method name="ToUpper" parameters="" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Returns a copy of this String converted to uppercase." />
+    <method name="PadRight" parameters="Expr&lt;int&gt; totalWidth" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Left-aligns the characters in this string, padding on the right with spaces or a specified Unicode character, for a specified total length." />
+    <method name="PadRight" parameters="Expr&lt;int&gt; totalWidth, Expr&lt;wchar_t&gt; paddingChar" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Left-aligns the characters in this string, padding on the right with spaces or a specified Unicode character, for a specified total length." />
+    <method name="PadLeft" parameters="Expr&lt;int&gt; totalWidth" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Right-aligns the characters in this instance, padding on the left with spaces or a specified Unicode character for a specified total length." />
+    <method name="PadLeft" parameters="Expr&lt;int&gt; totalWidth, Expr&lt;wchar_t&gt; paddingChar" wtype="Expr&lt;String^&gt;" ntype="String^"
+            comment="Right-aligns the characters in this instance, padding on the left with spaces or a specified Unicode character for a specified total length." />
+    <method name="Equals" parameters="Expr&lt;String^&gt; str" wtype="Expr&lt;bool&gt;" ntype="bool"
+            comment="Determines whether two String objects have the same value." />
+    <method name="CompareTo" parameters="Expr&lt;String^&gt; str" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Compares this instance with a specified object or String and returns an indication of their relative values." />
+    <method name="Compare" parameters="Expr&lt;String^&gt; strA, Expr&lt;String^&gt; strB" wtype="Expr&lt;int&gt;" ntype="int" static="true" 
+            comment="Compares two specified String objects." />
+    <method name="Concat" parameters="... cli::array&lt;Expression&lt;String^&gt;^&gt;^ strs" wtype="Expr&lt;String^&gt;" ntype="String^" static="true" 
+            exparams="cli::array&lt;String^&gt;::typeid" exparamconv="ParamsExpression&lt;String^&gt;" 
+            comment="Concatenates one or more instances of String." />
+  </wrapperClass>
+
+  <wrapperClass type="DateTime" literal="true"
+         comment="Template specialization for the 'DateTime' expresion.">
+  </wrapperClass>
+
+  <wrapperClass type="Nullable&lt;DateTime&gt;" literal="true"
+         comment="Template specialization for the 'Nullable&lt;DateTime&gt;' expresion.">
+  </wrapperClass>
+  
+<!-- ******************************************************************* -->
+<!-- variable classes for working with named variables of specific type  -->
+<!-- ******************************************************************* -->
+
+  <varClass type="unsigned char" comment="Class that represents variable of type unsigned char." />
+  <varClass type="signed char" comment="Class that represents variable of type signed char." />
+  <varClass type="float" comment="Class that represents variable of type float." />
+  <varClass type="double" comment="Class that represents variable of type double." />
+  <varClass type="System::Decimal" comment="Class that represents variable of type System::Decimal." />
+  <varClass type="long long int" comment="Class that represents variable of type long long int (Int64)." />
+  <varClass type="short" comment="Class that represents variable of type short (Int16)." />
+  <varClass type="int" comment="Class that represents variable of type int (Int32)." />
+  <varClass type="unsigned long long int" comment="Class that represents variable of type unsigned long long int (UInt64)." />
+  <varClass type="unsigned short" comment="Class that represents variable of type unsigned short (UInt16)." />
+  <varClass type="unsigned int" comment="Class that represents variable of type unsigned int (UInt32)." />
+  <varClass type="bool" comment="Class that represents variable of type bool." />
+  <varClass type="wchar_t" comment="Class that represents variable of type unicode wchar_t (Char)." />
+  <varClass type="String^" comment="Class that represents variable of type System::String." />
+
+<!-- ******************************************************************* -->
+<!-- static classes that provide wrappers for supported functionality    -->
+<!-- ******************************************************************* -->
+
+  <!-- don't worry I wrote a macro to generate the following beauty :-) -->
+  <!-- it wouldn't be bad idea to do it using reflection... -->
+  <staticClass type="System::Convert"
+               comment="Converts a base data type to another base data type.">
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToBool" wtype="Expr&lt;bool&gt;" ntype="bool" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'bool'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToByte" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'unsigned char'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToChar" wtype="Expr&lt;wchar_t&gt;" ntype="wchar_t" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'wchar_t'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDateTime" wtype="Expr&lt;DateTime&gt;" ntype="DateTime" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'DateTime'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDecimal" wtype="Expr&lt;Decimal&gt;" ntype="Decimal" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'Decimal'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToDouble" wtype="Expr&lt;double&gt;" ntype="double" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'double'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToSingle" wtype="Expr&lt;float&gt;" ntype="float" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'float'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt16" wtype="Expr&lt;short&gt;" ntype="short" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'short'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt32" wtype="Expr&lt;int&gt;" ntype="int" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToInt64" wtype="Expr&lt;long long int&gt;" ntype="long long int" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'long long int'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;bool&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;unsigned char&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;wchar_t&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;DateTime&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;Decimal&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;Double&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;float&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;short&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;int&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;long long int&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+    <method name="ToString" wtype="Expr&lt;String^&gt;" ntype="String^" parameters="Expr&lt;String^&gt; value"
+            comment="Overloaded. Converts a specified value to 'String^'." static="true" />
+  </staticClass>
+  
+  <!-- ************************* EMath ************************* -->
+  <staticClass type="System::Math" 
+               comment="Provides constants and static methods for trigonometric, logarithmic, and other common mathematical functions.">
+    <method name="Abs" parameters="Expr&lt;System::Decimal&gt; value" wtype="Expr&lt;System::Decimal&gt;" ntype="System::Decimal"
+            comment="Returns the absolute value of a specified number." static="true" />
+    <method name="Abs" parameters="Expr&lt;double&gt; value" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the absolute value of a specified number." static="true" />
+    <method name="Abs" parameters="Expr&lt;float&gt; value" wtype="Expr&lt;float&gt;" ntype="float"
+            comment="Returns the absolute value of a specified number." static="true" />
+    <method name="Abs" parameters="Expr&lt;int&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns the absolute value of a specified number." static="true" />
+    <method name="Abs" parameters="Expr&lt;long long int&gt; value" wtype="Expr&lt;long long int&gt;" ntype="long long int"
+            comment="Returns the absolute value of a specified number." static="true" />
+    <method name="Abs" parameters="Expr&lt;signed char&gt; value" wtype="Expr&lt;signed char&gt;" ntype="signed char"
+            comment="Returns the absolute value of a specified number." static="true" />
+    <method name="Abs" parameters="Expr&lt;short&gt; value" wtype="Expr&lt;short&gt;" ntype="short"
+            comment="Returns the absolute value of a specified number." static="true" />
+    <method name="Acos" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the angle whose cosine is the specified number." static="true" />
+    <method name="Asin" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the angle whose sine is the specified number." static="true" />
+    <method name="Atan" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the angle whose tangent is the specified number." static="true" />
+    <method name="Atan2" parameters="Expr&lt;double&gt; y, Expr&lt;double&gt; x" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the angle whose tangent is the quotient of two specified numbers." static="true" />
+    <method name="BigMul" parameters="Expr&lt;int&gt; a, Expr&lt;int&gt; b" wtype="Expr&lt;long long int&gt;" ntype="long long int"
+            comment="Produces the full product of two 32-bit numbers." static="true" />
+    <method name="Ceiling" parameters="Expr&lt;System::Decimal&gt; d" wtype="Expr&lt;System::Decimal&gt;" ntype="System::Decimal"
+            comment="Returns the smallest number greater than or equal to the specified number." static="true" />
+    <method name="Ceiling" parameters="Expr&lt;double&gt; a" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the smallest number greater than or equal to the specified number." static="true" />
+    <method name="Cos" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the cosine of the specified angle." static="true" />
+    <method name="Cosh" parameters="Expr&lt;double&gt; value" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the hyperbolic cosine of the specified angle." static="true" />
+    <method name="Exp" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns e raised to the specified power." static="true" />
+    <method name="Floor" parameters="Expr&lt;System::Decimal&gt; d" wtype="Expr&lt;System::Decimal&gt;" ntype="System::Decimal"
+            comment="Returns the largest number less than or equal to the specified number." static="true" />
+    <method name="Floor" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the largest number less than or equal to the specified number." static="true" />
+    <method name="Log" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the logarithm of a specified number." static="true" />
+    <method name="Log" parameters="Expr&lt;double&gt; a, Expr&lt;double&gt; newBase" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the logarithm of a specified number." static="true" />
+    <method name="Log10" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Log10  Returns the base 10 logarithm of a specified number." static="true" />
+    <method name="Max" parameters="Expr&lt;unsigned char&gt; val1, Expr&lt;unsigned char&gt; val2" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;System::Decimal&gt; val1, Expr&lt;System::Decimal&gt; val2" wtype="Expr&lt;System::Decimal&gt;" ntype="System::Decimal"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;double&gt; val1, Expr&lt;double&gt; val2" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;float&gt; val1, Expr&lt;float&gt; val2" wtype="Expr&lt;float&gt;" ntype="float"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;int&gt; val1, Expr&lt;int&gt; val2" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;long long int&gt; val1, Expr&lt;long long int&gt; val2" wtype="Expr&lt;long long int&gt;" ntype="long long int"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;signed char&gt; val1, Expr&lt;signed char&gt; val2" wtype="Expr&lt;signed char&gt;" ntype="signed char"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;short&gt; val1, Expr&lt;short&gt; val2" wtype="Expr&lt;short&gt;" ntype="short"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;unsigned int&gt; val1, Expr&lt;unsigned int&gt; val2" wtype="Expr&lt;unsigned int&gt;" ntype="unsigned int"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;unsigned long long int&gt; val1, Expr&lt;unsigned long long int&gt; val2" wtype="Expr&lt;unsigned long long int&gt;" ntype="unsigned long long int"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Max" parameters="Expr&lt;unsigned short&gt; val1, Expr&lt;unsigned short&gt; val2" wtype="Expr&lt;unsigned short&gt;" ntype="unsigned short"
+            comment="Returns the larger of two specified numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;unsigned char&gt; val1, Expr&lt;unsigned char&gt; val2" wtype="Expr&lt;unsigned char&gt;" ntype="unsigned char"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;System::Decimal&gt; val1, Expr&lt;System::Decimal&gt; val2" wtype="Expr&lt;System::Decimal&gt;" ntype="System::Decimal"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;double&gt; val1, Expr&lt;double&gt; val2" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;float&gt; val1, Expr&lt;float&gt; val2" wtype="Expr&lt;float&gt;" ntype="float"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;int&gt; val1, Expr&lt;int&gt; val2" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;long long int&gt; val1, Expr&lt;long long int&gt; val2" wtype="Expr&lt;long long int&gt;" ntype="long long int"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;signed char&gt; val1, Expr&lt;signed char&gt; val2" wtype="Expr&lt;signed char&gt;" ntype="signed char"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;short&gt; val1, Expr&lt;short&gt; val2" wtype="Expr&lt;short&gt;" ntype="short"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;unsigned int&gt; val1, Expr&lt;unsigned int&gt; val2" wtype="Expr&lt;unsigned int&gt;" ntype="unsigned int"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;unsigned long long int&gt; val1, Expr&lt;unsigned long long int&gt; val2" wtype="Expr&lt;unsigned long long int&gt;" ntype="unsigned long long int"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Min" parameters="Expr&lt;unsigned short&gt; val1, Expr&lt;unsigned short&gt; val2" wtype="Expr&lt;unsigned short&gt;" ntype="unsigned short"
+            comment="Returns the smaller of two numbers." static="true" />
+    <method name="Pow" parameters="Expr&lt;double&gt; x, Expr&lt;double&gt; y" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns a specified number raised to the specified power." static="true" />
+    <method name="Round" parameters="Expr&lt;System::Decimal&gt; d" wtype="Expr&lt;System::Decimal&gt;" ntype="System::Decimal"
+            comment="Rounds a value to the nearest number or specified number of Expr&lt;System::Decimal&gt; places." static="true" />
+    <method name="Round" parameters="Expr&lt;double&gt; a" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Rounds a value to the nearest number or specified number of Expr&lt;System::Decimal&gt; places." static="true" />
+    <method name="Round" parameters="Expr&lt;System::Decimal&gt; d, Expr&lt;int&gt; decimals" wtype="Expr&lt;System::Decimal&gt;" ntype="System::Decimal"
+            comment="Rounds a value to the nearest number or specified number of Expr&lt;System::Decimal&gt; places." static="true" />
+    <method name="Round" parameters="Expr&lt;double&gt; value, Expr&lt;int&gt; digits" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Rounds a value to the nearest number or specified number of Expr&lt;System::Decimal&gt; places." static="true" />
+    <method name="Sign" parameters="Expr&lt;System::Decimal&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns a value indicating the sign of a number." static="true" />
+    <method name="Sign" parameters="Expr&lt;double&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns a value indicating the sign of a number." static="true" />
+    <method name="Sign" parameters="Expr&lt;float&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns a value indicating the sign of a number." static="true" />
+    <method name="Sign" parameters="Expr&lt;int&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns a value indicating the sign of a number." static="true" />
+    <method name="Sign" parameters="Expr&lt;long long int&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns a value indicating the sign of a number." static="true" />
+    <method name="Sign" parameters="Expr&lt;signed char&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns a value indicating the sign of a number." static="true" />
+    <method name="Sign" parameters="Expr&lt;short&gt; value" wtype="Expr&lt;int&gt;" ntype="int"
+            comment="Returns a value indicating the sign of a number." static="true" />
+    <method name="Sin" parameters="Expr&lt;double&gt; a" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the sine of the specified angle." static="true" />
+    <method name="Sinh" parameters="Expr&lt;double&gt; value" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the hyperbolic sine of the specified angle." static="true" />
+    <method name="Sqrt" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the square root of a specified number." static="true" />
+    <method name="Tan" parameters="Expr&lt;double&gt; a" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the tangent of the specified angle." static="true" />
+    <method name="Tanh" parameters="Expr&lt;double&gt; value" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Returns the hyperbolic tangent of the specified angle." static="true" />
+    <method name="Truncate" parameters="Expr&lt;System::Decimal&gt; d" wtype="Expr&lt;System::Decimal&gt;" ntype="System::Decimal"
+            comment="Calculates the integral part of a number." static="true" />
+    <method name="Truncate" parameters="Expr&lt;double&gt; d" wtype="Expr&lt;double&gt;" ntype="double"
+            comment="Calculates the integral part of a number." static="true" />
+  </staticClass>
+
+  <!-- ******************************************************************* -->
+  <!-- documentation purposes only                                         -->
+  <!-- ******************************************************************* -->
+  <docWrapperClass type="IEnumerable&lt;T&gt;"
+                 comment="Template specialization for working with collections. Contains methods for querying data (called operators in LINQ terminology).">
+    <method name="Count" parameters="" wtype="Expr&lt;int&gt;"
+            comment="Operator counts the number of elements in a sequence with a return type of int."  />
+    <method name="Count" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter" wtype="Expr&lt;int&gt;"
+            comment="Operator counts the number of elements in a sequence for which the filter returns true with a return type of int."  />
+		<method wtype="Expr&lt;IEnumerable&lt;R&gt;^&gt;" name="Select" parameters="Lambda&lt;System::Query::Func&lt;T, R&gt;^&gt;^ selector"
+			      comment="The Select operator performs a projection over a sequence"  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Where" parameters="Lambda&lt;System::Query::Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Where operator filters a sequence based on a predicate"  />
+		<method wtype="Expr&lt;IEnumerable&lt;S&gt;^&gt;" name="SelectMany" parameters="Lambda&lt;Func&lt;T, IEnumerable&lt;S&gt;^&gt;^&gt;^ selector"
+			      comment="The SelectMany operator performs a one to many element projection over a sequence."  />
+		<method wtype="Expr&lt;IEnumerable&lt;V&gt;^&gt;" name="Join" parameters="Expr&lt;IQueryable&lt;U&gt;^&gt; inner, Lambda&lt;Func&lt;T,K&gt;^&gt;^ outerKeySelector, Lambda&lt;Func&lt;U,K&gt;^&gt;^ innerKeySelector, Lambda&lt;Func&lt;T,U,V&gt;^&gt;^ resultSelector"
+			      comment="The Join operator performs an inner join of two sequences based on matching keys extracted from the elements."  />
+		<method wtype="Expr&lt;IEnumerable&lt;V&gt;^&gt;" name="GroupJoin" parameters="Expr&lt;IQueryable&lt;U&gt;^&gt; inner, Lambda&lt;Func&lt;T,K&gt;^&gt;^ outerKeySelector, Lambda&lt;Func&lt;U,K&gt;^&gt;^ innerKeySelector, Lambda&lt;Func&lt;T,IEnumerable&lt;U&gt;^,V&gt;^&gt;^ resultSelector"
+			      comment="The GroupJoin operator performs a grouped join of two sequences based on matching keys extracted from the elements."  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="OrderBy" parameters="Lambda&lt;Func&lt;T,K&gt;^&gt;^ keySelector"
+			      comment="The OrderBy operator orders a sequence according to one or more keys in ascending order."  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="OrderByDescending" parameters="Lambda&lt;Func&lt;T, K&gt;^&gt;^ keySelector"
+			      comment="he OrderBy operator orders a sequence according to one or more keys in descending order."  />
+		<method wtype="Expr&lt;T&gt;" name="First" parameters=""
+			      comment="The First operator returns the first element of a sequence."  />
+		<method wtype="Expr&lt;T&gt;" name="FirstOrDefault" parameters=""
+			      comment="The FirstOrDefault operator returns the first element of a sequence, or a default value if no element is found."  />
+		<method wtype="Expr&lt;T&gt;" name="Last" parameters=""
+			      comment="The Last operator returns the last element of a sequence."  />
+		<method wtype="Expr&lt;T&gt;" name="LastOrDefault" parameters=""
+			      comment="The LastOrDefault operator returns the last element of a sequence, or a default value if no element is found."  />
+		<method wtype="Expr&lt;T&gt;" name="Single" parameters=""
+			      comment="The Single operator returns the single element of a sequence."  />
+		<method wtype="Expr&lt;T&gt;" name="SingleOrDefault" parameters=""
+			      comment="The SingleOrDefault operator returns the single element of a sequence, or a default value if no element is found."  />
+		<method wtype="Expr&lt;bool&gt;" name="Any" parameters=""
+			      comment="The Any operator checks whether any element of a sequence satisfies a condition."  />
+		<method wtype="Expr&lt;T&gt;" name="Min" parameters=""
+			      comment="The Min operator finds the minimum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;T&gt;" name="Max" parameters=""
+			      comment="The Max operator finds the maximum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;long long int&gt;" name="LongCount" parameters=""
+			      comment="The LongCount operator counts the number of elements in a sequence with a return type of Long."  />
+		<method wtype="Expr&lt;int&gt;" name="Count" parameters=""
+			      comment="The Count operator counts the number of elements in a sequence with a return type of int."  />
+		<method wtype="Expr&lt;int&gt;" name="Count" parameters="Lambda&lt;System::Query::Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Count operator counts the number of elements in a sequence with a return type of int."  />
+		<method wtype="Expr&lt;IEnumerable&lt;IGrouping&lt;K, T&gt;^&gt;^&gt;" name="GroupBy" parameters="Lambda&lt;Func&lt;T, K&gt;^&gt;^ keySelector"
+			      comment="The GroupBy operator groups the elements of a sequence."  />
+		<method wtype="Expr&lt;IEnumerable&lt;IGrouping&lt;K, E&gt;^&gt;^&gt;" name="GroupBy" parameters="Lambda&lt;Func&lt;T, K&gt;^&gt;^ keySelector, Lambda&lt;Func&lt;T, E&gt;^&gt;^ elementSelector"
+			      comment="The GroupBy operator groups the elements of a sequence."  />
+		<method wtype="Expr&lt;V&gt;" name="Min" parameters="Lambda&lt;Func&lt;T, V&gt;^&gt;^ selector"
+			      comment="The Min operator finds the minimum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;V&gt;" name="Max" parameters="Lambda&lt;Func&lt;T, V&gt;^&gt;^ selector"
+			      comment="The Max operator finds the maximum of a sequence of numeric values. "  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Take" parameters="Expr&lt;int&gt; count"
+			      comment="The Take operator yields a given number of elements from a sequence and then skips the remainder of the sequence."  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Skip" parameters="Expr&lt;int&gt; count"
+			      comment="The Skip operator skips a given number of elements from a sequence and then yields the remainder of the sequence."  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Distinct" parameters=""
+			      comment="The Distinct operator eliminates duplicate elements from a sequence."  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Concat" parameters="Expr&lt;IQueryable&lt;T&gt;^&gt; source"
+			      comment="The Concat operator concatenates two sequences."  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Union" parameters="Expr&lt;IQueryable&lt;T&gt;^&gt; source"
+			      comment="The Union operator produces the set union of two sequences."  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Intersect" parameters="Expr&lt;IQueryable&lt;T&gt;^&gt; source"
+			      comment="The Intersect operator produces the set intersection of two sequences."  />
+		<method wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Except" parameters="Expr&lt;IQueryable&lt;T&gt;^&gt; source"
+			      comment="The Except operator produces the set difference between two sequences."  />
+		<method wtype="Expr&lt;T&gt;" name="First" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The First operator returns the first element of a sequence."  />
+		<method wtype="Expr&lt;T&gt;" name="FirstOrDefault" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The FirstOrDefault operator returns the first element of a sequence, or a default value if no element is found."  />
+		<method wtype="Expr&lt;T&gt;" name="Last" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Last operator returns the last element of a sequence."  />
+		<method wtype="Expr&lt;T&gt;" name="LastOrDefault" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The LastOrDefault operator returns the last element of a sequence, or a default value if no element is found."  />
+		<method wtype="Expr&lt;T&gt;" name="Single" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Single operator returns the single element of a sequence."  />
+		<method wtype="Expr&lt;T&gt;" name="SingleOrDefault" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The SingleOrDefault operator returns the single element of a sequence, or a default value if no element is found."  />
+		<method wtype="Expr&lt;bool&gt;" name="Any" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Any operator checks whether any element of a sequence satisfies a condition."  />
+		<method wtype="Expr&lt;bool&gt;" name="All" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The All operator checks whether all elements of a sequence satisfy a condition."  />
+		<method wtype="Expr&lt;long long int&gt;" name="LongCount" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The LongCount operator counts the number of elements in a sequence with a return type of Long."  />
+		<method wtype="Expr&lt;int&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, int&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;double&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, int&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+		<method wtype="Expr&lt;long long int&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, long long int&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;double&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, long long int&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+		<method wtype="Expr&lt;double&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, double&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;double&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, double&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Decimal&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Decimal&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Decimal&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Decimal&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Nullable&lt;int&gt;&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;int&gt;&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Nullable&lt;double&gt;&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;int&gt;&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Nullable&lt;long long int&gt;&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;long long int&gt;&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Nullable&lt;double&gt;&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;long long int&gt;&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Nullable&lt;double&gt;&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;double&gt;&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Nullable&lt;double&gt;&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;double&gt;&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Nullable&lt;Decimal&gt;&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;Decimal&gt;&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+		<method wtype="Expr&lt;Nullable&lt;Decimal&gt;&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;Decimal&gt;&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+  </docWrapperClass>
+
+  <docWrapperClass type="IGrouping&lt;K, T&gt;"
+                 comment="Template specialization for results of GroupBy operator. Contains expressions that represent Key and values.">
+    <property name="Key" wtype="Expr&lt;K&gt;"
+              comment="Returns expression that represents the key returned from GroupBy." />
+    <property name="Values" wtype="IEnumerable&lt;T&gt;"
+              comment="Returns expression that represents collection of values returned from GroupBy." />
+  </docWrapperClass>
+
+  <docWrapperClass name="Tuple&lt;T0, T1&gt;" type="Tuple&lt;T0, T1&gt;"
+                   comment="This class represents a pair of values.">
+    <property name="First" wtype="Expr&lt;T0&gt;"
+              comment="Returns the expression repressenting first value stored in tuple." />
+    <property name="First" wtype="Expr&lt;T0&gt;"
+              comment="Returns the expression repressenting second value stored in tuple." />
+  </docWrapperClass>
+
+  <docSpecialClass name="CQuery&lt;T&gt;" type="cquery"
+                   comment="This class represents data query. It contain several methods for constructing queries, like Where, Select, Average and other.">
+    <property name="Query" wtype="IQueryable&lt;T&gt;"
+              comment="Returns the underlying LINQ query representation." />
+    <method static="true" name="Count" parameters="" wtype="Expr&lt;int&gt;"
+            comment="Operator counts the number of elements in a sequence with a return type of int."  />
+    <method static="true" name="Count" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter" wtype="Expr&lt;int&gt;"
+            comment="Operator counts the number of elements in a sequence for which the filter returns true with a return type of int."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;R&gt;^&gt;" name="Select" parameters="Lambda&lt;System::Query::Func&lt;T, R&gt;^&gt;^ selector"
+			      comment="The Select operator performs a projection over a sequence"  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Where" parameters="Lambda&lt;System::Query::Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Where operator filters a sequence based on a predicate"  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;S&gt;^&gt;" name="SelectMany" parameters="Lambda&lt;Func&lt;T, IEnumerable&lt;S&gt;^&gt;^&gt;^ selector"
+			      comment="The SelectMany operator performs a one to many element projection over a sequence."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;V&gt;^&gt;" name="Join" parameters="Expr&lt;IQueryable&lt;U&gt;^&gt; inner, Lambda&lt;Func&lt;T,K&gt;^&gt;^ outerKeySelector, Lambda&lt;Func&lt;U,K&gt;^&gt;^ innerKeySelector, Lambda&lt;Func&lt;T,U,V&gt;^&gt;^ resultSelector"
+			      comment="The Join operator performs an inner join of two sequences based on matching keys extracted from the elements."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;V&gt;^&gt;" name="GroupJoin" parameters="Expr&lt;IQueryable&lt;U&gt;^&gt; inner, Lambda&lt;Func&lt;T,K&gt;^&gt;^ outerKeySelector, Lambda&lt;Func&lt;U,K&gt;^&gt;^ innerKeySelector, Lambda&lt;Func&lt;T,IEnumerable&lt;U&gt;^,V&gt;^&gt;^ resultSelector"
+			      comment="The GroupJoin operator performs a grouped join of two sequences based on matching keys extracted from the elements."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="OrderBy" parameters="Lambda&lt;Func&lt;T,K&gt;^&gt;^ keySelector"
+			      comment="The OrderBy operator orders a sequence according to one or more keys in ascending order."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="OrderByDescending" parameters="Lambda&lt;Func&lt;T, K&gt;^&gt;^ keySelector"
+			      comment="he OrderBy operator orders a sequence according to one or more keys in descending order."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="First" parameters=""
+			      comment="The First operator returns the first element of a sequence."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="FirstOrDefault" parameters=""
+			      comment="The FirstOrDefault operator returns the first element of a sequence, or a default value if no element is found."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="Last" parameters=""
+			      comment="The Last operator returns the last element of a sequence."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="LastOrDefault" parameters=""
+			      comment="The LastOrDefault operator returns the last element of a sequence, or a default value if no element is found."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="Single" parameters=""
+			      comment="The Single operator returns the single element of a sequence."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="SingleOrDefault" parameters=""
+			      comment="The SingleOrDefault operator returns the single element of a sequence, or a default value if no element is found."  />
+    <method static="true" wtype="Expr&lt;bool&gt;" name="Any" parameters=""
+			      comment="The Any operator checks whether any element of a sequence satisfies a condition."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="Min" parameters=""
+			      comment="The Min operator finds the minimum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="Max" parameters=""
+			      comment="The Max operator finds the maximum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;long long int&gt;" name="LongCount" parameters=""
+			      comment="The LongCount operator counts the number of elements in a sequence with a return type of Long."  />
+    <method static="true" wtype="Expr&lt;int&gt;" name="Count" parameters=""
+			      comment="The Count operator counts the number of elements in a sequence with a return type of int."  />
+    <method static="true" wtype="Expr&lt;int&gt;" name="Count" parameters="Lambda&lt;System::Query::Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Count operator counts the number of elements in a sequence with a return type of int."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;IGrouping&lt;K, T&gt;^&gt;^&gt;" name="GroupBy" parameters="Lambda&lt;Func&lt;T, K&gt;^&gt;^ keySelector"
+			      comment="The GroupBy operator groups the elements of a sequence."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;IGrouping&lt;K, E&gt;^&gt;^&gt;" name="GroupBy" parameters="Lambda&lt;Func&lt;T, K&gt;^&gt;^ keySelector, Lambda&lt;Func&lt;T, E&gt;^&gt;^ elementSelector"
+			      comment="The GroupBy operator groups the elements of a sequence."  />
+    <method static="true" wtype="Expr&lt;V&gt;" name="Min" parameters="Lambda&lt;Func&lt;T, V&gt;^&gt;^ selector"
+			      comment="The Min operator finds the minimum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;V&gt;" name="Max" parameters="Lambda&lt;Func&lt;T, V&gt;^&gt;^ selector"
+			      comment="The Max operator finds the maximum of a sequence of numeric values. "  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Take" parameters="Expr&lt;int&gt; count"
+			      comment="The Take operator yields a given number of elements from a sequence and then skips the remainder of the sequence."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Skip" parameters="Expr&lt;int&gt; count"
+			      comment="The Skip operator skips a given number of elements from a sequence and then yields the remainder of the sequence."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Distinct" parameters=""
+			      comment="The Distinct operator eliminates duplicate elements from a sequence."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Concat" parameters="Expr&lt;IQueryable&lt;T&gt;^&gt; source"
+			      comment="The Concat operator concatenates two sequences."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Union" parameters="Expr&lt;IQueryable&lt;T&gt;^&gt; source"
+			      comment="The Union operator produces the set union of two sequences."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Intersect" parameters="Expr&lt;IQueryable&lt;T&gt;^&gt; source"
+			      comment="The Intersect operator produces the set intersection of two sequences."  />
+    <method static="true" wtype="Expr&lt;IEnumerable&lt;T&gt;^&gt;" name="Except" parameters="Expr&lt;IQueryable&lt;T&gt;^&gt; source"
+			      comment="The Except operator produces the set difference between two sequences."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="First" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The First operator returns the first element of a sequence."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="FirstOrDefault" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The FirstOrDefault operator returns the first element of a sequence, or a default value if no element is found."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="Last" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Last operator returns the last element of a sequence."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="LastOrDefault" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The LastOrDefault operator returns the last element of a sequence, or a default value if no element is found."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="Single" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Single operator returns the single element of a sequence."  />
+    <method static="true" wtype="Expr&lt;T&gt;" name="SingleOrDefault" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The SingleOrDefault operator returns the single element of a sequence, or a default value if no element is found."  />
+    <method static="true" wtype="Expr&lt;bool&gt;" name="Any" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The Any operator checks whether any element of a sequence satisfies a condition."  />
+    <method static="true" wtype="Expr&lt;bool&gt;" name="All" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The All operator checks whether all elements of a sequence satisfy a condition."  />
+    <method static="true" wtype="Expr&lt;long long int&gt;" name="LongCount" parameters="Lambda&lt;Func&lt;T, bool&gt;^&gt;^ filter"
+			      comment="The LongCount operator counts the number of elements in a sequence with a return type of Long."  />
+    <method static="true" wtype="Expr&lt;int&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, int&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;double&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, int&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;long long int&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, long long int&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;double&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, long long int&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;double&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, double&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;double&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, double&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Decimal&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Decimal&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Decimal&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Decimal&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Nullable&lt;int&gt;&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;int&gt;&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Nullable&lt;double&gt;&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;int&gt;&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Nullable&lt;long long int&gt;&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;long long int&gt;&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Nullable&lt;double&gt;&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;long long int&gt;&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Nullable&lt;double&gt;&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;double&gt;&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Nullable&lt;double&gt;&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;double&gt;&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Nullable&lt;Decimal&gt;&gt;" name="Sum" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;Decimal&gt;&gt;^&gt;^ selector"
+			      comment="The Sum operator computes the sum of a sequence of numeric values."  />
+    <method static="true" wtype="Expr&lt;Nullable&lt;Decimal&gt;&gt;" name="Average" parameters="Lambda&lt;System::Query::Func&lt;T, Nullable&lt;Decimal&gt;&gt;^&gt;^ selector"
+			      comment="The Average operator computes the average of a sequence of numeric values."  />
+  </docSpecialClass>
+
+  <docSpecialClass name="Tuple&lt;T0, T1&gt;" type="tuple"
+                   comment="This class represents a pair of values.">
+    <property name="First" wtype="T0"
+              comment="Returns the first value stored in tuple." />
+    <property name="First" wtype="T0"
+              comment="Returns the second value stored in tuple." />
+  </docSpecialClass>
+
+</typed>
+
+<!--
+
+!!!! THE FOLLOWING MEMBERS ARE MISSING !!!!
+String:
+  public int Length { get; }
+  public char this[int index] { get; }
+
+-->
