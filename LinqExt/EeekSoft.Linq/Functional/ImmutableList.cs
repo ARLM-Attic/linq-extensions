@@ -114,14 +114,14 @@ namespace EeekSoft.Functional
 		}
 	}
 
-	public abstract class LazySeqence<R> : IEnumerable<R>, IFunctionalEnumerable<R>
+	public abstract class LazySequence<R> : IEnumerable<R>, IFunctionalEnumerable<R>
 	{
-		internal class Cons<T> : LazySeqence<T>
+		internal class Cons<T> : LazySequence<T>
 		{
 			T _value;
-			Func<LazySeqence<T>> _rest;
+			Func<LazySequence<T>> _rest;
 
-			public Cons(T value, Func<LazySeqence<T>> rest)
+			public Cons(T value, Func<LazySequence<T>> rest)
 			{
 				_value = value; _rest = rest;
 			}
@@ -132,7 +132,7 @@ namespace EeekSoft.Functional
 			}
 		}
 
-		internal class Nil<T> : LazySeqence<T>
+		internal class Nil<T> : LazySequence<T>
 		{
 			public override Tuple<T, IFunctionalEnumerable<T>>? GetNext()
 			{
@@ -156,16 +156,16 @@ namespace EeekSoft.Functional
 		{ }
 	}
 	
-	public static class LazySeqence
+	public static class LazySequence
 	{
-		public static LazySeqence<T> Empty<T>()
+		public static LazySequence<T> Empty<T>()
 		{
-			return new LazySeqence<T>.Nil<T>();
+			return new LazySequence<T>.Nil<T>();
 		}
 
-		public static LazySeqence<T> Cons<T>(T val, Func<LazySeqence<T>> listFunc)
+		public static LazySequence<T> Cons<T>(T val, Func<LazySequence<T>> listFunc)
 		{
-			return new LazySeqence<T>.Cons<T>(val, listFunc);
+			return new LazySequence<T>.Cons<T>(val, listFunc);
 		}
 	}
 }

@@ -38,7 +38,7 @@ namespace EeekSoft.Query
 		}
 	}
 
-	public static class LinqUtils
+	public static class Linq
 	{
 		/// <summary>
 		/// Utility function for building expression trees for lambda functions
