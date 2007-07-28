@@ -12,14 +12,125 @@ using EeekSoft.Expressions;
 using EeekSoft.Query;
 
 using EeekSoft.LinqDemos;
+using System.Drawing;
+using System.Net;
+using System.Threading;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace EeekSoft.LinqDemos
 {
+	delegate void Action();
+
+	public class Unit
+	{
+		private Unit() {}
+		static Unit()
+		{
+			Value = new Unit();
+		}
+		public static Unit Value { get; private set; }
+	}
+
+	static class AsyncExtensions
+	{
+		public static Async<WebResponse> GetResponseAsync(this WebRequest req)
+		{
+			return new Async<WebResponse>(req.BeginGetResponse, req.EndGetResponse);
+		}
+
+		public static Async<int> BeginReadAsync(this Stream stream, byte[] buffer, int offset, int count)
+		{
+			return new Async<int>(
+				(callback, st) => stream.BeginRead(buffer, offset, count, callback, st), 
+				stream.EndRead);
+		}
+
+		public static void Execute(this IEnumerable<IAsync> async)
+		{
+			AsyncExtensions.Run(async.GetEnumerator());
+		}
+
+		private static void Run(IEnumerator<IAsync> en)
+		{
+			if (!en.MoveNext()) return;
+			en.Current.ExecuteStep
+				(() => AsyncExtensions.Run(en));
+		}
+	}
+
+	static class Async
+	{
+		public static Async<Unit> Parallel(IEnumerable<IAsync>[] operations)
+		{
+			return new Async<Unit>((cont) =>
+				{
+					bool[] completed = new bool[operations.Length];
+					for (int i = 0; i < operations.Length; i++)
+						ExecuteAndSet(operations[i], completed, i, cont).Execute();
+				});
+		}
+
+		private static IEnumerable<IAsync> ExecuteAndSet(IEnumerable<IAsync> op, bool[] flags, int index, Action<Unit> cont)
+		{
+			foreach (IAsync async in op) yield return async;
+			bool allSet = true;
+			lock (flags)
+			{
+				flags[index] = true;
+				foreach (bool b in flags) if (!b) { allSet = false; break; }
+			}
+			if (allSet) cont(Unit.Value);
+		}
+	}
+
+	interface IAsync
+	{
+		void ExecuteStep(Action cont);
+	}
+
+	class Async<T> : IAsync
+	{
+		Action<Action<T>> func;
+		T result;
+		bool completed = false;
+
+		public Async(Action<Action<T>> function)
+		{
+			this.func = function;
+		}
+
+		public Async(Func<AsyncCallback, object, IAsyncResult> begin, Func<IAsyncResult, T> end)
+		{
+			this.func = (cont) => begin(delegate(IAsyncResult res) { cont(end(res)); }, null);
+		}
+
+		public T Result
+		{
+			get
+			{
+				if (!completed) throw new Exception("Operation not completed, did you forgot 'yield return'?");
+				return result;
+			}
+		}
+
+		public void ExecuteStep(Action cont)
+		{
+			func((res) =>
+				{
+					result = res;
+					completed = true;
+					cont();
+				});
+		}
+	}
+
 	class Program
 	{
 		static void Main(string[] args)
 		{
-			SimpleExpansion();
+			/*SimpleExpansion();
 			LinqToSqlExpandSimple();
 			LinqToSqlExpandMultiple();
 
@@ -27,42 +138,109 @@ namespace EeekSoft.LinqDemos
 			FunctionalProgramming();
 
 			ParametrizedQueries();
+			QueryBuilder();*/
+
+			LazyValues();
+			//Asynchronous();
 		}
 
-		private static void ParametrizedQueries()
+		static Random rnd = new Random();
+
+		static void LazyValues()
 		{
-			Console.WriteLine("\n\n=== [ Parametrized queries ] ===");
-			NorthwindDataContext db = new NorthwindDataContext();
+			Application.Run(new FontForm());
 
-			// Build a parametrized query - this is in fact just a 
-			// lamdba function (created using Linq.Func) that returns a query
-			// when it gets the function ('selector') and a value ('val')
-			var queryBuilder = Linq.Func(
-				(string val, Expression<Func<Customer, string>> selector) =>
-					from c in db.Customers.ToExpandable()
-						where selector.Expand(c).IndexOf(val) != -1
-						select c );
+			var calc1 = Lazy.New(() => {
+					Console.WriteLine("Calculating #1");
+					return 42;
+				});
 
-			// Dictionary that returns a lambda expression that reads
-			// the property specified by a string (key)
-			var dict = new Dictionary<string, Expression<Func<Customer, string>>> 
-				 { { "CompanyName", c => c.CompanyName },
-					 { "Country",			c => c.Country },
-					 { "ContactName", c => c.ContactName } };
+			var calc2 = Lazy.New(() => {
+					Console.WriteLine("Calculating #2");
+					return 43;
+				});
 
-			// Get the input from the user
-			Console.Write("Filter - field name (CompanyName, ContactName, Country):\n> ");
-			string field = Console.ReadLine();
-			Console.Write("Filter - value:\n> ");
-			string value = Console.ReadLine();
-			
-			// Build the query using query builder
-			var q = queryBuilder(value, dict[field]);
-			
-			// Execute & print the results
-			foreach (var c in q)
-				Console.WriteLine("{0,-30}{1,-30}{2}", c.CompanyName, c.ContactName, c.Country);
+
+			int res;
+			res = ReturnRandomValue(calc1, calc2);
+			Console.WriteLine("Result = {0}", res);
+			res = ReturnRandomValue(calc1, calc2);
+			Console.WriteLine("Result = {0}", res);
 		}
+
+		static int ReturnRandomValue(Lazy<int> a0, Lazy<int> a1)
+		{
+			if (rnd.Next(2) == 0)
+				return a0.Value;
+			else
+				return a1.Value;
+		}
+
+		#region Asynchronous
+
+		static bool running = true;
+
+		static IEnumerable<IAsync> AsyncMethod(string url)
+		{
+			WebRequest req = HttpWebRequest.Create(url);
+			Console.WriteLine("[{0}] starting", url);
+			
+			Async<WebResponse> response = req.GetResponseAsync();
+			yield return response;
+
+			Console.WriteLine("[{0}] got response", url);
+			Stream resp = response.Result.GetResponseStream();
+
+			MemoryStream ms = new MemoryStream();
+			int read = -1;
+			while (read != 0)
+			{
+				byte[] buffer = new byte[1024];
+				Async<int> count = resp.BeginReadAsync(buffer, 0, 1024);
+				yield return count;
+
+				Console.WriteLine("[{0}] got data: {1}", url, count.Result);
+				ms.Write(buffer, 0, count.Result);
+				read = count.Result;
+			}
+
+			Regex reg = new Regex(@"<title[^>]*>(.*)</title[^>]*>");
+			ms.Seek(0, SeekOrigin.Begin);
+			string s = new StreamReader(ms).ReadToEnd();
+			string title = reg.Match(s).Groups[1].Value;
+			title = "".PadLeft((78 - title.Length) / 2) + 
+				title + "".PadRight((78 - title.Length) / 2);
+			Console.WriteLine("[{0}] completed\n{2}\n{1}\n{2}", 
+				url, title, "".PadRight(79,'*'));
+		}
+
+		static IEnumerable<IAsync> DownloadAll()
+		{
+			var methods = Async.Parallel(new IEnumerable<IAsync>[] {
+				AsyncMethod("http://www.microsoft.com"),
+				AsyncMethod("http://www.google.com"),
+				AsyncMethod("http://www.apple.com"),
+				AsyncMethod("http://www.novell.com") });
+			yield return methods;
+
+			running = false;
+			Console.WriteLine("Completed all!");
+		}
+
+		static void Asynchronous()
+		{
+			DownloadAll().Execute();
+
+			int i = 0;
+			while (running)
+			{
+				Console.WriteLine(i++);
+				Thread.Sleep(500);
+			}
+			Console.ReadLine();
+		}
+
+		#endregion
 
 		#region FunctionalProgramming
 
@@ -307,6 +485,97 @@ namespace EeekSoft.LinqDemos
 			Console.WriteLine("\nContainsAll [Gu,Ca]:");
 			foreach (var row in q2)
 				Console.WriteLine("{0}", row.ProductName);
+		}
+
+		#endregion
+		#region ParametrizedQueries
+
+		private static void ParametrizedQueries()
+		{
+			Console.WriteLine("\n\n=== [ Parametrized queries ] ===");
+			NorthwindDataContext db = new NorthwindDataContext();
+
+			// Build a parametrized query - this is in fact just a 
+			// lamdba function (created using Linq.Func) that returns a query
+			// when it gets the function ('selector') and a value ('val')
+			var queryBuilder = Linq.Func(
+				(string val, Expression<Func<Customer, string>> selector) =>
+					from c in db.Customers.ToExpandable()
+					where selector.Expand(c).IndexOf(val) != -1
+					select c);
+
+			// Dictionary that returns a lambda expression that reads
+			// the property specified by a string (key)
+			var dict = new Dictionary<string, Expression<Func<Customer, string>>> 
+				 { { "CompanyName", c => c.CompanyName },
+					 { "Country",			c => c.Country },
+					 { "ContactName", c => c.ContactName } };
+
+			// Get the input from the user
+			Console.Write("Filter - field name (CompanyName, ContactName, Country):\n> ");
+			string field = Console.ReadLine();
+			Console.Write("Filter - value:\n> ");
+			string value = Console.ReadLine();
+
+			// Build the query using query builder
+			var q = queryBuilder(value, dict[field]);
+
+			// Execute & print the results
+			foreach (var c in q)
+				Console.WriteLine("{0,-30}{1,-30}{2}", c.CompanyName, c.ContactName, c.Country);
+		}
+
+		#endregion
+		#region QueryBuilder
+
+		private static void QueryBuilder()
+		{
+			Console.WriteLine("\n\n=== [ Query builder ] ===");
+			NorthwindDataContext db = new NorthwindDataContext();
+
+			// Dictionary that returns a lambda expression that reads
+			// the property specified by a string (key)
+			var dict = new Dictionary<string, Expression<Func<Customer, string>>> 
+				 { { "CompanyName", c => c.CompanyName },
+					 { "Country",			c => c.Country },
+					 { "ContactName", c => c.ContactName } };
+
+			// Condition that always returns true
+			var trueExpr = Linq.Expr((Customer c) => true);
+			// Condition that always returns false
+			var falseExpr = Linq.Expr((Customer c) => false);
+			// Combine two functions using 'or' 
+			var combineOr = Linq.Func
+				((Expression<Func<Customer, bool>> f, Expression<Func<Customer, bool>> g) =>
+					 Linq.Expr((Customer c) => f.Expand(c) || g.Expand(c)));
+			// Combine two functions using 'and'
+			var combineAnd = Linq.Func
+				((Expression<Func<Customer, bool>> f, Expression<Func<Customer, bool>> g) =>
+					Linq.Expr((Customer c) => f.Expand(c) && g.Expand(c)));
+
+			// Generate expression..
+			Console.Write("Do you want to build 'or' or 'and' query (enter 'or' or 'and')?\n> ");
+			bool generateOr = Console.ReadLine().ToLower() == "or";
+			var combinator = generateOr ? combineOr : combineAnd;
+			var expr = generateOr ? falseExpr : trueExpr;
+			foreach (var item in dict)
+			{
+				var propSelector = item.Value;
+				Console.Write("Enter value for '{0}':\n> ", item.Key);
+				var enteredVal = Console.ReadLine();
+				var currentExpr = Linq.Expr((Customer c) => propSelector.Expand(c).IndexOf(enteredVal) != -1);
+				expr = combinator(expr, currentExpr);
+			}
+
+			// Now, we can build a query using the generated 'expr'
+			var q =
+				from c in db.Customers.ToExpandable()
+					where expr.Expand(c)
+					select c;
+
+			// Execute & print the results
+			foreach (var c in q)
+				Console.WriteLine("{0,-30}{1,-30}{2}", c.CompanyName, c.ContactName, c.Country);
 		}
 
 		#endregion

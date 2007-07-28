@@ -1,11 +1,28 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio Codename Orcas
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EeekSoft.Linq", "EeekSoft.Linq\EeekSoft.Linq.csproj", "{5FA4B5E7-9F62-4688-BF39-0C36003E8861}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EeekSoft.LinqDemos", "EeekSoft.LinqDemos\EeekSoft.LinqDemos.csproj", "{57CF5FD9-513A-4550-91DE-DC54FE1AA363}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{CEC98A4A-AC6A-4D84-84D4-C87ADCA1BDE1}"
+	ProjectSection(SolutionItems) = preProject
+		Documents\lazyvalues.html = Documents\lazyvalues.html
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs02.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = EeekSoft.Linq\\EeekSoft.Linq.csproj
+		SccProjectName1 = EeekSoft.Linq
+		SccLocalPath1 = EeekSoft.Linq
+		SccProjectUniqueName2 = EeekSoft.LinqDemos\\EeekSoft.LinqDemos.csproj
+		SccProjectName2 = EeekSoft.LinqDemos
+		SccLocalPath2 = EeekSoft.LinqDemos
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

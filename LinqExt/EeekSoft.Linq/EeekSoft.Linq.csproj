@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.20404</ProductVersion>
+    <ProductVersion>9.0.20706</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5FA4B5E7-9F62-4688-BF39-0C36003E8861}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -11,6 +11,10 @@
     <AssemblyName>EeekSoft.Linq</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Functional\Functional.cs" />
     <Compile Include="Functional\ImmutableList.cs" />
+    <Compile Include="Functional\Lazy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Functional\Tuple.cs" />
     <Compile Include="Query\ExpressionExtensions.cs" />
