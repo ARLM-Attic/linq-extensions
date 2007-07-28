@@ -20,9 +20,7 @@ namespace EeekSoft.Functional
 			IEnumerator<T1> e1 = first.GetEnumerator();
 			IEnumerator<T2> e2 = second.GetEnumerator();
 			while (e1.MoveNext() && e2.MoveNext())
-			{
-				yield return new Tuple<T1, T2>(e1.Current, e2.Current);
-			}
+				yield return Tuple.New(e1.Current, e2.Current);
 		}
 	}
 

@@ -26,7 +26,7 @@ namespace EeekSoft.Query
 	/// <summary>
 	/// Wrapper for IQueryable that calls Expand
 	/// </summary>
-	internal class ExpandableWrapper<T> : IQueryable<T>
+	internal class ExpandableWrapper<T> : IQueryable<T>, IQueryProvider
 	{
 		IQueryable<T> _item;
 
@@ -35,35 +35,30 @@ namespace EeekSoft.Query
 			_item = item;
 		}
 
-		#region IQueryable<T> Members
+		public IQueryable CreateQuery(Expression expression)
+		{
+			return _item.Provider.CreateQuery(expression);
+		}
+
+		public object Execute(Expression expression)
+		{
+			return _item.Provider.Execute(expression.ExpandUntyped());
+		}
 
 		public IQueryable<S> CreateQuery<S>(Expression expression)
 		{
 			Expression res = expression.ExpandUntyped();
-			return new ExpandableWrapper<S>(_item.CreateQuery<S>(res));
+			return new ExpandableWrapper<S>(_item.Provider.CreateQuery<S>(res));
 		}
 
 		public S Execute<S>(Expression expression)
 		{
-			return _item.Execute<S>(expression);
+			return _item.Provider.Execute<S>(expression);
 		}
-
-		#endregion
-
-		#region IEnumerable<T> Members
 
 		IEnumerator<T> IEnumerable<T>.GetEnumerator()
 		{
 			return _item.GetEnumerator();
-		}
-
-		#endregion
-
-		#region IQueryable Members
-
-		public IQueryable CreateQuery(Expression expression)
-		{
-			return _item.CreateQuery(expression);
 		}
 
 		public Type ElementType
@@ -71,25 +66,19 @@ namespace EeekSoft.Query
 			get { return _item.ElementType; }
 		}
 
-		public object Execute(Expression expression)
-		{
-			return _item.Execute(expression.ExpandUntyped());
-		}
-
 		public Expression Expression
 		{
 			get { return _item.Expression; }
 		}
 
-		#endregion
-
-		#region IEnumerable Members
-		
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return _item.GetEnumerator();
 		}
 
-		#endregion
+		public IQueryProvider Provider
+		{
+			get { return this; }
+		}
 	}
 }

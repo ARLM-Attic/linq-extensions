@@ -49,10 +49,11 @@ namespace EeekSoft.Expressions
 
 	internal abstract class ExpressionVisitor
 	{
+		// Methods
 		internal ExpressionVisitor()
 		{
 		}
-		 
+
 		internal virtual Expression Visit(Expression exp)
 		{
 			if (exp == null)
@@ -81,16 +82,17 @@ namespace EeekSoft.Expressions
 				case ExpressionType.NotEqual:
 				case ExpressionType.Or:
 				case ExpressionType.OrElse:
+				case ExpressionType.Power:
 				case ExpressionType.RightShift:
 				case ExpressionType.Subtract:
 				case ExpressionType.SubtractChecked:
 					return this.VisitBinary((BinaryExpression) exp);
 
 				case ExpressionType.ArrayLength:
-				case ExpressionType.Cast:
 				case ExpressionType.Convert:
 				case ExpressionType.ConvertChecked:
 				case ExpressionType.Negate:
+				case ExpressionType.UnaryPlus:
 				case ExpressionType.NegateChecked:
 				case ExpressionType.Not:
 				case ExpressionType.Quote:
@@ -98,7 +100,6 @@ namespace EeekSoft.Expressions
 					return this.VisitUnary((UnaryExpression) exp);
 
 				case ExpressionType.Call:
-				case ExpressionType.CallVirtual:
 					return this.VisitMethodCall((MethodCallExpression) exp);
 
 				case ExpressionType.Conditional:
@@ -107,21 +108,11 @@ namespace EeekSoft.Expressions
 				case ExpressionType.Constant:
 					return this.VisitConstant((ConstantExpression) exp);
 
-				case ExpressionType.Funclet:
-					return this.VisitFunclet((FuncletExpression) exp);
-
 				case ExpressionType.Invoke:
 					return this.VisitInvocation((InvocationExpression) exp);
 
 				case ExpressionType.Lambda:
 					return this.VisitLambda((LambdaExpression) exp);
-
-				case ExpressionType.Lift:
-				case ExpressionType.LiftEqual:
-				case ExpressionType.LiftFalse:
-				case ExpressionType.LiftNotEqual:
-				case ExpressionType.LiftTrue:
-					return this.VisitLift((LiftExpression) exp);
 
 				case ExpressionType.ListInit:
 					return this.VisitListInit((ListInitExpression) exp);
@@ -152,9 +143,14 @@ namespace EeekSoft.Expressions
 		{
 			Expression left = this.Visit(b.Left);
 			Expression right = this.Visit(b.Right);
-			if ((left == b.Left) && (right == b.Right))
+			Expression expression3 = this.Visit(b.Conversion);
+			if (((left == b.Left) && (right == b.Right)) && (expression3 == b.Conversion))
 			{
 				return b;
+			}
+			if ((b.NodeType == ExpressionType.Coalesce) && (b.Conversion != null))
+			{
+				return Expression.Coalesce(left, right, expression3 as LambdaExpression);
 			}
 			return Expression.MakeBinary(b.NodeType, left, right, b.IsLiftedToNull, b.Method);
 		}
@@ -222,6 +218,46 @@ namespace EeekSoft.Expressions
 			return c;
 		}
 
+		internal virtual ElementInit VisitElementInitializer(ElementInit initializer)
+		{
+			ReadOnlyCollection<Expression> arguments = this.VisitExpressionList(initializer.Arguments);
+			if (arguments != initializer.Arguments)
+			{
+				return Expression.ElementInit(initializer.AddMethod, arguments);
+			}
+			return initializer;
+		}
+
+		internal virtual IEnumerable<ElementInit> VisitElementInitializerList(ReadOnlyCollection<ElementInit> original)
+		{
+			List<ElementInit> list = null;
+			int num = 0;
+			int capacity = original.Count;
+			while (num < capacity)
+			{
+				ElementInit item = this.VisitElementInitializer(original[num]);
+				if (list != null)
+				{
+					list.Add(item);
+				}
+				else if (item != original[num])
+				{
+					list = new List<ElementInit>(capacity);
+					for (int i = 0; i < num; i++)
+					{
+						list.Add(original[i]);
+					}
+					list.Add(item);
+				}
+				num++;
+			}
+			if (list != null)
+			{
+				return list;
+			}
+			return original;
+		}
+
 		internal virtual ReadOnlyCollection<Expression> VisitExpressionList(ReadOnlyCollection<Expression> original)
 		{
 			List<Expression> sequence = null;
@@ -247,14 +283,9 @@ namespace EeekSoft.Expressions
 			}
 			if (sequence != null)
 			{
-				return ((IEnumerable<Expression>)sequence).ToReadOnlyCollection<Expression>();
+				return sequence.ToReadOnlyCollection<Expression>();
 			}
 			return original;
-		}
-
-		internal virtual Expression VisitFunclet(FuncletExpression f)
-		{
-			return f;
 		}
 
 		internal virtual Expression VisitInvocation(InvocationExpression iv)
@@ -278,22 +309,11 @@ namespace EeekSoft.Expressions
 			return lambda;
 		}
 
-		internal virtual Expression VisitLift(LiftExpression lift)
-		{
-			Expression expression = this.Visit(lift.Expression);
-			ReadOnlyCollection<Expression> arguments = this.VisitExpressionList(lift.Arguments);
-			if ((expression == lift.Expression) && (arguments == lift.Arguments))
-			{
-				return lift;
-			}
-			return Expression.MakeLift(lift.NodeType, expression, lift.Parameters, arguments);
-		}
-
 		internal virtual Expression VisitListInit(ListInitExpression init)
 		{
 			NewExpression newExpression = this.VisitNew(init.NewExpression);
-			IEnumerable<Expression> initializers = this.VisitExpressionList(init.Expressions);
-			if ((newExpression == init.NewExpression) && (initializers == init.Expressions))
+			IEnumerable<ElementInit> initializers = this.VisitElementInitializerList(init.Initializers);
+			if ((newExpression == init.NewExpression) && (initializers == init.Initializers))
 			{
 				return init;
 			}
@@ -333,8 +353,8 @@ namespace EeekSoft.Expressions
 
 		internal virtual MemberListBinding VisitMemberListBinding(MemberListBinding binding)
 		{
-			IEnumerable<Expression> initializers = this.VisitExpressionList(binding.Expressions);
-			if (initializers != binding.Expressions)
+			IEnumerable<ElementInit> initializers = this.VisitElementInitializerList(binding.Initializers);
+			if (initializers != binding.Initializers)
 			{
 				return Expression.ListBind(binding.Member, initializers);
 			}
@@ -359,17 +379,21 @@ namespace EeekSoft.Expressions
 			{
 				return m;
 			}
-			return Expression.MakeCall(m.NodeType, instance, m.Method, arguments);
+			return Expression.Call(instance, m.Method, arguments);
 		}
 
 		internal virtual NewExpression VisitNew(NewExpression nex)
 		{
 			IEnumerable<Expression> arguments = this.VisitExpressionList(nex.Arguments);
-			if (arguments != nex.Arguments)
+			if (arguments == nex.Arguments)
 			{
-				return Expression.New(nex.Constructor, arguments);
+				return nex;
 			}
-			return nex;
+			if (nex.Members != null)
+			{
+				return Expression.New(nex.Constructor, arguments, nex.Members);
+			}
+			return Expression.New(nex.Constructor, arguments);
 		}
 
 		internal virtual Expression VisitNewArray(NewArrayExpression na)
