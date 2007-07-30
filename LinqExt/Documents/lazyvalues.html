@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>Untitled Page</title>
+    <link rel="stylesheet" type="text/css" href="http://tomasp.net/files/articles.css" />
+</head>
+<body>
+
+<h1>Lazy computations in C#</h1>
+<p>Most of the programming languages used in practice (including for example C#, VB.NET, C++, Python or Java) 
+  employ so called <em>eager evaluation</em>, which means that the program evaluates all expression and 
+  statements in the order in which they are written, so all the preceding statements and expressions
+  are evaluated before executing the next piece of code. This for example means that all arguments 
+  to a method call are evaluated before calling the method. Sometimes it may be however useful to 
+  delay an execution of some code until the result is actually needed, either because the result may 
+  not be needed at all (but we can’t tell that before executing some computation) or because 
+  we don’t want to block the program for a long time by executing all computations in advance and 
+  instead we want to execute the computations later, when we will actually need the result. </p>
+<p>In this article we will look how these lazy computations can be written in C# (using some of the
+  new language features from version 3.0). We will 
+  first implement a <code>Lazy</code> class to represent this kind of computations, then look 
+  at a few simple examples to demonstrate how the class can be used and finally we will examine one 
+  slightly more complicated, but practically useful application.</p>
+  
+<h2>The Lazy&lt;T&gt; Class</h2>
+<p>We start by writing a generic class <code>Lazy&lt;T&gt;</code>, which represents the delayed computation. 
+  This class can be described as a class that will execute chunk of code once someone asks for a 
+  result and it will cache the result, so the chunk of code is executed at most once. How can we 
+  write such class in C#? It is easy – we can use a <code>Func</code> delegate to represent the “chunk of code” 
+  that will be executed and we use generics to write a class that can represent computations 
+  returning any .NET type:</p>
+<pre>
+using System.Linq;
+
+public class Lazy&lt;T&gt; {
+  private Func&lt;T&gt; func;
+  private T result;
+  private bool hasValue;
+
+  public Lazy(Func&lt;T&gt; func) {
+    this.func = func;
+    this.hasValue = false;
+  }
+
+  public T Value {
+    get {
+      if (!this.hasValue) { 
+        this.result = this.func(); 
+        this.hasValue = true; 
+      }
+      return this.result;
+    }
+  }
+}
+</pre>
+<p>The class has three fields – the <code>func</code> field is a delegate that will be executed when 
+  someone will access the value, the <code>hasValue</code> field is a logical value saying whether 
+  we already called the delegate and finally, the <code>result</code> field stores the result after calling the 
+  delegate. All the important logic of the class is in the <code>Value</code> property, which returns 
+  a value calculated by the delegate. The getter of the property first tests if we already have the 
+  result and if not, it calls the delegate and stores the result. Otherwise we can just return the result 
+  that was calculated earlier. </p>
+<p>Let’s now look how can we use this class – its constructor expects a value of the type 
+  <code>Func&lt;T&gt;</code> (from the <code>System.Linq</code> namespace), which is new in .NET 3.5 and represents a delegate that doesn’t have any 
+  arguments and returns a value of type <code>T</code>. The advantage of using this type is that we 
+  can use C# 3.0 anonymous functions to write a code that will be executed in a very compact way directly 
+  when creating an instance of the <code>Lazy&lt;T&gt;</code> value. In the following example we 
+  create a lazy value that will return a numeric value once it is executed, but it will also print a 
+  string to the console window when it is executed, so we can trace when the code runs:</p>
+<pre>
+Lazy&lt;int&gt; lazy = new Lazy&lt;int&gt;(() =&gt; {
+    Console.WriteLine("calculating...");
+    return 42;
+  });
+
+Console.WriteLine("starting...");  
+Console.WriteLine("result = {0}", lazy.Value);  
+Console.WriteLine("result (again) = {0}", lazy.Value);  
+</pre>
+<p>In this code we first created a variable called <code>lazy</code> which represents our lazy value, then printed 
+  a string to the console window and finally we used the <code>Value</code> property of the lazy value 
+  to read the result of the computation (even twice!). As you may have expected, the output of this 
+  program is following:</p>
+<pre>
+starting...
+calculating...
+result = 42
+result (again) = 42
+</pre>
+<p>What exactly happened? When we created a lazy value the program just created a delegate from the 
+  anonymous function, but it didn’t execute it when creating the value so it didn’t print anything to the screen. 
+  Later the first <code>WriteLine</code> executed and printed the <code>"starting..."</code> string. 
+  Next, when calling the second <code>WriteLine</code>, we accessed the Value property of our lazy value, 
+  so the anonymous function was executed, printed the <code>"calculating..."</code> string and returned 
+  the result. The result was given as an argument to the <code>WriteLine</code> function and it printed the 
+  string <code>"result = 42"</code>. Finally, we accessed the Value property again, but since the 
+  value was already calculated, the lazy value just returned the cached result and the last <code>WriteLine</code> call 
+  was performed printing the string <code>"result (again) = 42"</code>.</p>
+<h2>Leveraging from the C# Type Inference</h2>
+<p>Before moving to more interesting and far more useful examples, we will do one more improvement to 
+  the way we write lazy values. The syntax used for creating lazy value in the previous example is somewhat 
+  too verbose, because we had to write <code>Lazy&lt;int&gt;</code> twice. Luckily, we can easily simplify 
+  it by using C# type inference. In C# it is possible to omit the type arguments when calling generic method, 
+  so we will write simple static helper class with static method for creating a lazy value (helper classes 
+  like this exist in other places of the .NET Framework – for example <code>System.Nullable</code> has similar purpose):</p>
+<pre>
+public static class Lazy {
+  public static Lazy&lt;T&gt; New&lt;T&gt;(Func&lt;T&gt; func) {
+    return new Lazy&lt;T&gt;(func);
+  }
+}
+</pre>
+<p>Using this class we can create a lazy value just by calling <code>Lazy.New</code> instead of writing 
+  <code>new Lazy&lt;int&gt;</code>. To get even more compact syntax we can also combine this syntax with 
+  the new C# 3.0 <code>var</code> keyword, which tells the compiler to infer the type of a variable automatically 
+  depending on the expression used to initialize the variable. Additionally this little helper class also 
+  enables using C# 3.0 anonymous types – these can be of course used only locally (inside a method), but 
+  it may be often useful as demonstrated in the following example, where we use anonymous type to create 
+  a lazy value representing both sum and multiple of two numbers:</p>
+<pre>
+int a = 22, b = 20;
+var lazy = Lazy.New(() =&gt; {
+    Console.WriteLine("calculating...");
+    return new { Mul = a*b, Sum = a+b };
+  });
+
+Console.WriteLine("Mul = {0}, Sum = {1}", 
+  lazy.Value.Mul, lazy.Value.Sum);  
+</pre>
+<h2>Lazy Value as an Argument of a Method</h2>
+<p>In the introduction I mentioned that one of the aspects of the <em>eager evaluation</em> (used in most of the programming 
+  languages including C#) is that arguments of a method are evaluated before calling the method, which may not be the best 
+  thing to do if the calculation can take long time to complete and a method may not actually need the value. On the 
+  other side in <em>lazy evaluation</em>, the arguments are never evaluated unless the value is actually required in the 
+  method body and indeed this behavior can be nicely simulated using our lazy values. The following method 
+  takes two lazy values, but in fact uses only one of them: </p>
+<pre>
+static Random rnd = new Random();
+
+static void UseRandomArgument(Lazy&lt;int&gt; a0, Lazy&lt;int&gt; a1) {
+  int res;
+  if (rnd.Next(2) == 0) 
+    res = a0.Value; 
+  else 
+    res = a1.Value;
+  Console.WriteLine("result = {0}", res);
+}
+</pre>
+<p>To call this method we create two lazy values (using the <code>Lazy.New</code> method) and to demonstrate 
+  how the code behaves we also add a <code>Console.WriteLine</code> call to the anonymous function used for calculating the value.</p>
+<pre>
+var calc1 = Lazy.New(() =&gt; {
+    Console.WriteLine("Calculating #1");
+    return 42;
+  });
+
+var calc2 = Lazy.New(() =&gt; {
+    Console.WriteLine("Calculating #2");
+    return 44;
+  });
+
+UseRandomArgument(calc1, calc2);
+UseRandomArgument(calc1, calc2);
+</pre>
+<p>Since the <code>UseRandomArgument</code> function uses a randomly one of the arguments we can get different result 
+  every time we execute the application. The purpose of this example is to demonstrate that the code to calculate the argument may 
+  not be executed (if the argument is never used) which may happen for example when the function chooses to read a value
+  of the first argument (<code>calc1</code>) in both calls. In such case the second value (<code>calc2</code>) is never 
+  used and we get the following output:</p>
+<pre>
+Calculating #1
+Result = 42
+Result = 42
+</pre>
+<p>Note that the line that would be printed when calculating the second argument (<code>"Calculating #2"</code>) 
+  isn’t present in the output. Of course if the function uses different argument in both calls we can 
+  get output like following, in which case both of the lazy values were forced to execute:</p>
+<pre>
+Calculating #1
+Result = 42
+Calculating #2
+Result = 44
+</pre>
+<h2>Example – Font List with Preview</h2>
+<img src="fontform.png" style="float:right; margin:10px;" alt="Font List Screenshot" />
+<p>As a last thing in this article we will use the <code>Lazy&lt;T&gt;</code> class to write a more 
+  interesting application – as you can see on the screenshot the application contains a drop down list 
+  with font families and the font preview is shown when the font is selected. How can we use our lazy 
+  values in this application? We don’t want to draw previews of all the font families when populating 
+  the list, but we would like to draw the preview bitmap for every font only once to save some CPU time 
+  and this is exactly what the lazy values are good for!</p>
+<p>First of all we will need a data type for storing information about the font, so we define a class 
+  with two properties – one is the font name, which is an ordinary string and the other is lazy value storing 
+  a bitmap (the preview of the font). In addition we can use C# 3.0 automatic properties to save some 
+  time when implementing the class (when using automatic properties, the C# compiler generates trivial 
+  getter and setter for us):</p>
+<pre>
+private class FontInfo {
+  public Lazy&lt;Bitmap&gt; Preview { get; set; }
+  public string Name { get; set; }
+}
+</pre>
+<p>Before looking at the interesting part of the code we will also need a utility method to draw the 
+  preview of the font. The <code>DrawFontPreview</code> method from the following code sample does exactly that 
+  – it uses <code>System.Drawing</code> classes to draw a white rectangle with some text using the specified font family.</p>
+<pre>
+private void DrawFontPreview(FontFamily f, Bitmap bmp) {
+  Rectangle rc = new Rectangle(0, 0, 300, 200);
+  StringFormat sf = new StringFormat();
+  sf.Alignment = StringAlignment.Center;
+  sf.LineAlignment = StringAlignment.Center;
+  string lipsum = "Lorem ipsum dolor sit amet, consectetuer " +
+    "adipiscing elit. Etiam ut mi blandit turpis euismod malesuada. " +
+    "Mauris congue pede vitae lectus. Ut faucibus dignissim diam. ";
+
+  using (Font fnt = new Font(f, 15, FontStyle.Regular))
+  using (Graphics gr = Graphics.FromImage(bmp)) {
+    gr.FillRectangle(Brushes.White, rc);
+    gr.DrawString(lipsum, fnt, Brushes.Black, rc, sf);
+  }
+}
+</pre>
+<p>Let’s look at the code that populates the list. First we use the <code>FontFamily.Families</code> property 
+  to get an array with information about all the installed fonts. Now, we want to create a list 
+  containing a <code>FontInfo</code> instance for every font family in the array. We could indeed allocate 
+  an array and use a for loop to do this, but it is much easier to take advantage of another 
+  new .NET 3.5 feature and use the <code>Select</code> query operator. <code>Select</code> is an extension method 
+  for all <code>IEnumerable</code> types, so we can use it for array as well. It takes a delegate as an argument, calls 
+  this delegate for every element in the sequence and returns an <code>IEnumerable</code> containing results 
+  returned by the delegate. In our case we give it an anonymous function with a body that builds a 
+  lazy value for drawing the preview and returns a <code>FontInfo</code> value for every font family. 
+  After creating this <code>IEnumerable</code> value we use it to populate the items in the drop down list using data-binding:</p>
+<pre>
+private void FontForm_Load(object sender, EventArgs e) {
+  var fontInfo = FontFamily.Families.Select(f =&gt; {
+
+      // Create a lazy value for drawing the preview
+      var preview = Lazy.New(() =&gt; {
+          Bitmap bmp = new Bitmap(300, 200);
+          DrawFontPreview(f, bmp); 
+          return bmp;
+        });
+
+      // Return a font info with the family name and the preview
+      return new FontInfo { Name = f.Name, Preview = preview };
+    });
+
+  // Use data-binding to populate the drop down list
+  fontCombo.DataSource = fontInfo.ToList();
+  fontCombo.DisplayMember = "Name";
+}
+</pre>
+<p>The last missing piece of the application is an event handler that displays the preview of 
+  the selected font when user selects an item in the drop down list. To do this we simply read the 
+  <code>SelectedItem</code> property of the drop down list, cast it to the <code>FontInfo</code> type 
+  which we used to store information about the font and we get the preview bitmap from the 
+  <code>Preview</code> lazy value using the <code>Value</code> property, which forces the evaluation of the value.</p>
+<pre>
+private void fontCombo_SelectedIndexChanged(object sender, EventArgs e) {
+  FontInfo fnt = (FontInfo)fontCombo.SelectedItem;
+  fontPreview.Image = fnt.Preview.Value;
+}
+</pre>
+<h2>Conclusion</h2>
+<p>In this article we looked at representing lazy values in C# using the <code>Lazy&lt;T&gt;</code> class,
+  which can be very useful pattern in situations where you want to delay a computation of some expression
+  until the result is actually needed, but you want to keep the code simple and readable. We also examined an
+  example that demonstrates using the lazy pattern to solve a more real world problem. Finally, we used
+  some of the new C# 3.0 language features (including type inference, anonymous functions, query operators
+  and anonymous types) to make the code more compact and easier to read.</p>
+
+
+</body>
+</html>

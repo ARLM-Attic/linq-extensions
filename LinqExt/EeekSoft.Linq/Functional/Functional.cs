@@ -8,7 +8,7 @@ namespace EeekSoft.Functional
 {
 	public static class EnumerableExts
 	{
-		public static S FoldLeft<T, S>(this IEnumerable<T> list, Func<S, T, S> fun, S init)
+		public static S Fold<T, S>(this IEnumerable<T> list, Func<S, T, S> fun, S init)
 		{
 			foreach (T el in list)
 				init = fun(init, el);

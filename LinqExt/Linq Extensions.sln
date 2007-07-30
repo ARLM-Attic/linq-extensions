@@ -7,12 +7,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EeekSoft.LinqDemos", "EeekS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{CEC98A4A-AC6A-4D84-84D4-C87ADCA1BDE1}"
 	ProjectSection(SolutionItems) = preProject
+		Documents\dynamic-queries.html = Documents\dynamic-queries.html
+		Documents\fontform.png = Documents\fontform.png
 		Documents\lazyvalues.html = Documents\lazyvalues.html
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{C01682F5-5815-41DA-A04A-09BCD3490804}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demos.Lazy.Intro", "Demos\Demos.Lazy.Intro\Demos.Lazy.Intro.csproj", "{41380D43-97E4-4F71-925F-CAF85FC8FC52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demos.Lazy.FontList", "Demos\Demos.Lazy.FontList\Demos.Lazy.FontList.csproj", "{6D95542D-A3CF-48AE-8580-DE7BE91ADC36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demos.Functional.Mandel", "Demos\Demos.Functional.Mandel\Demos.Functional.Mandel.csproj", "{3C38034B-9BEC-4E9A-B6FF-CA0B2EF3FD3D}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 6
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs02.codeplex.com/
 		SccLocalPath0 = .
@@ -22,6 +32,18 @@ Global
 		SccProjectUniqueName2 = EeekSoft.LinqDemos\\EeekSoft.LinqDemos.csproj
 		SccProjectName2 = EeekSoft.LinqDemos
 		SccLocalPath2 = EeekSoft.LinqDemos
+		SccProjectUniqueName3 = Demos\\Demos.Lazy.Intro\\Demos.Lazy.Intro.csproj
+		SccProjectTopLevelParentUniqueName3 = Linq\u0020Extensions.sln
+		SccProjectName3 = Demos/Demos.Lazy.Intro
+		SccLocalPath3 = Demos\\Demos.Lazy.Intro
+		SccProjectUniqueName4 = Demos\\Demos.Lazy.FontList\\Demos.Lazy.FontList.csproj
+		SccProjectTopLevelParentUniqueName4 = Linq\u0020Extensions.sln
+		SccProjectName4 = Demos/Demos.Lazy.FontList
+		SccLocalPath4 = Demos\\Demos.Lazy.FontList
+		SccProjectUniqueName5 = Demos\\Demos.Functional.Mandel\\Demos.Functional.Mandel.csproj
+		SccProjectTopLevelParentUniqueName5 = Linq\u0020Extensions.sln
+		SccProjectName5 = Demos/Demos.Functional.Mandel
+		SccLocalPath5 = Demos\\Demos.Functional.Mandel
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,8 +58,25 @@ Global
 		{57CF5FD9-513A-4550-91DE-DC54FE1AA363}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57CF5FD9-513A-4550-91DE-DC54FE1AA363}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57CF5FD9-513A-4550-91DE-DC54FE1AA363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41380D43-97E4-4F71-925F-CAF85FC8FC52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41380D43-97E4-4F71-925F-CAF85FC8FC52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41380D43-97E4-4F71-925F-CAF85FC8FC52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41380D43-97E4-4F71-925F-CAF85FC8FC52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D95542D-A3CF-48AE-8580-DE7BE91ADC36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D95542D-A3CF-48AE-8580-DE7BE91ADC36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D95542D-A3CF-48AE-8580-DE7BE91ADC36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D95542D-A3CF-48AE-8580-DE7BE91ADC36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C38034B-9BEC-4E9A-B6FF-CA0B2EF3FD3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C38034B-9BEC-4E9A-B6FF-CA0B2EF3FD3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C38034B-9BEC-4E9A-B6FF-CA0B2EF3FD3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C38034B-9BEC-4E9A-B6FF-CA0B2EF3FD3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{41380D43-97E4-4F71-925F-CAF85FC8FC52} = {C01682F5-5815-41DA-A04A-09BCD3490804}
+		{6D95542D-A3CF-48AE-8580-DE7BE91ADC36} = {C01682F5-5815-41DA-A04A-09BCD3490804}
+		{3C38034B-9BEC-4E9A-B6FF-CA0B2EF3FD3D} = {C01682F5-5815-41DA-A04A-09BCD3490804}
 	EndGlobalSection
 EndGlobal

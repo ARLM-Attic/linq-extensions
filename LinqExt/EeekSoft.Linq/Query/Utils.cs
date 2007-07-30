@@ -149,7 +149,7 @@ namespace EeekSoft.Query
 
 			// Combine using And when method is ContainsAll or using Or when method is ConainsAny
 			var init = Expression.Call(selfRef, contMeth, Expression.Constant(vals[0]));
-			return vals.Skip(1).FoldLeft<string, Expression>(Agg,init);
+			return vals.Skip(1).Fold<string, Expression>(Agg,init);
 		}
 	}
 

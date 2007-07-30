@@ -6,12 +6,6 @@ using System.Xml.Linq;
 using System.Data.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-
-using EeekSoft.Functional;
-using EeekSoft.Expressions;
-using EeekSoft.Query;
-
-using EeekSoft.LinqDemos;
 using System.Drawing;
 using System.Net;
 using System.Threading;
@@ -19,112 +13,27 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
+using EeekSoft.Functional;
+using EeekSoft.Expressions;
+using EeekSoft.Query;
+using EeekSoft.LinqDemos;
+using EeekSoft.Asynchronous;
+
 namespace EeekSoft.LinqDemos
 {
-	delegate void Action();
+	using CustomerCondition = 
+		System.Linq.Expressions.Expression
+			<System.Func<EeekSoft.LinqDemos.Customer, bool>>;
 
-	public class Unit
-	{
-		private Unit() {}
-		static Unit()
-		{
-			Value = new Unit();
-		}
-		public static Unit Value { get; private set; }
-	}
+	using CustomerPropSelector = 
+		System.Linq.Expressions.Expression
+			<System.Func<EeekSoft.LinqDemos.Customer, string>>;
 
-	static class AsyncExtensions
-	{
-		public static Async<WebResponse> GetResponseAsync(this WebRequest req)
-		{
-			return new Async<WebResponse>(req.BeginGetResponse, req.EndGetResponse);
-		}
-
-		public static Async<int> BeginReadAsync(this Stream stream, byte[] buffer, int offset, int count)
-		{
-			return new Async<int>(
-				(callback, st) => stream.BeginRead(buffer, offset, count, callback, st), 
-				stream.EndRead);
-		}
-
-		public static void Execute(this IEnumerable<IAsync> async)
-		{
-			AsyncExtensions.Run(async.GetEnumerator());
-		}
-
-		private static void Run(IEnumerator<IAsync> en)
-		{
-			if (!en.MoveNext()) return;
-			en.Current.ExecuteStep
-				(() => AsyncExtensions.Run(en));
-		}
-	}
-
-	static class Async
-	{
-		public static Async<Unit> Parallel(IEnumerable<IAsync>[] operations)
-		{
-			return new Async<Unit>((cont) =>
-				{
-					bool[] completed = new bool[operations.Length];
-					for (int i = 0; i < operations.Length; i++)
-						ExecuteAndSet(operations[i], completed, i, cont).Execute();
-				});
-		}
-
-		private static IEnumerable<IAsync> ExecuteAndSet(IEnumerable<IAsync> op, bool[] flags, int index, Action<Unit> cont)
-		{
-			foreach (IAsync async in op) yield return async;
-			bool allSet = true;
-			lock (flags)
-			{
-				flags[index] = true;
-				foreach (bool b in flags) if (!b) { allSet = false; break; }
-			}
-			if (allSet) cont(Unit.Value);
-		}
-	}
-
-	interface IAsync
-	{
-		void ExecuteStep(Action cont);
-	}
-
-	class Async<T> : IAsync
-	{
-		Action<Action<T>> func;
-		T result;
-		bool completed = false;
-
-		public Async(Action<Action<T>> function)
-		{
-			this.func = function;
-		}
-
-		public Async(Func<AsyncCallback, object, IAsyncResult> begin, Func<IAsyncResult, T> end)
-		{
-			this.func = (cont) => begin(delegate(IAsyncResult res) { cont(end(res)); }, null);
-		}
-
-		public T Result
-		{
-			get
-			{
-				if (!completed) throw new Exception("Operation not completed, did you forgot 'yield return'?");
-				return result;
-			}
-		}
-
-		public void ExecuteStep(Action cont)
-		{
-			func((res) =>
-				{
-					result = res;
-					completed = true;
-					cont();
-				});
-		}
-	}
+	using CustomerConditionCombinator = 
+		System.Func
+			<System.Linq.Expressions.Expression<System.Func<EeekSoft.LinqDemos.Customer, bool>>, 
+			 System.Linq.Expressions.Expression<System.Func<EeekSoft.LinqDemos.Customer, bool>>, 
+	     System.Linq.Expressions.Expression<System.Func<EeekSoft.LinqDemos.Customer, bool>>>;
 
 	class Program
 	{
@@ -135,112 +44,11 @@ namespace EeekSoft.LinqDemos
 			LinqToSqlExpandMultiple();
 
 			OtherExtensions();
-			FunctionalProgramming();
+			FunctionalProgramming();*/
 
-			ParametrizedQueries();
-			QueryBuilder();*/
-
-			LazyValues();
-			//Asynchronous();
+			//ParametrizedQueries();
+			QueryBuilder();
 		}
-
-		static Random rnd = new Random();
-
-		static void LazyValues()
-		{
-			Application.Run(new FontForm());
-
-			var calc1 = Lazy.New(() => {
-					Console.WriteLine("Calculating #1");
-					return 42;
-				});
-
-			var calc2 = Lazy.New(() => {
-					Console.WriteLine("Calculating #2");
-					return 43;
-				});
-
-
-			int res;
-			res = ReturnRandomValue(calc1, calc2);
-			Console.WriteLine("Result = {0}", res);
-			res = ReturnRandomValue(calc1, calc2);
-			Console.WriteLine("Result = {0}", res);
-		}
-
-		static int ReturnRandomValue(Lazy<int> a0, Lazy<int> a1)
-		{
-			if (rnd.Next(2) == 0)
-				return a0.Value;
-			else
-				return a1.Value;
-		}
-
-		#region Asynchronous
-
-		static bool running = true;
-
-		static IEnumerable<IAsync> AsyncMethod(string url)
-		{
-			WebRequest req = HttpWebRequest.Create(url);
-			Console.WriteLine("[{0}] starting", url);
-			
-			Async<WebResponse> response = req.GetResponseAsync();
-			yield return response;
-
-			Console.WriteLine("[{0}] got response", url);
-			Stream resp = response.Result.GetResponseStream();
-
-			MemoryStream ms = new MemoryStream();
-			int read = -1;
-			while (read != 0)
-			{
-				byte[] buffer = new byte[1024];
-				Async<int> count = resp.BeginReadAsync(buffer, 0, 1024);
-				yield return count;
-
-				Console.WriteLine("[{0}] got data: {1}", url, count.Result);
-				ms.Write(buffer, 0, count.Result);
-				read = count.Result;
-			}
-
-			Regex reg = new Regex(@"<title[^>]*>(.*)</title[^>]*>");
-			ms.Seek(0, SeekOrigin.Begin);
-			string s = new StreamReader(ms).ReadToEnd();
-			string title = reg.Match(s).Groups[1].Value;
-			title = "".PadLeft((78 - title.Length) / 2) + 
-				title + "".PadRight((78 - title.Length) / 2);
-			Console.WriteLine("[{0}] completed\n{2}\n{1}\n{2}", 
-				url, title, "".PadRight(79,'*'));
-		}
-
-		static IEnumerable<IAsync> DownloadAll()
-		{
-			var methods = Async.Parallel(new IEnumerable<IAsync>[] {
-				AsyncMethod("http://www.microsoft.com"),
-				AsyncMethod("http://www.google.com"),
-				AsyncMethod("http://www.apple.com"),
-				AsyncMethod("http://www.novell.com") });
-			yield return methods;
-
-			running = false;
-			Console.WriteLine("Completed all!");
-		}
-
-		static void Asynchronous()
-		{
-			DownloadAll().Execute();
-
-			int i = 0;
-			while (running)
-			{
-				Console.WriteLine(i++);
-				Thread.Sleep(500);
-			}
-			Console.ReadLine();
-		}
-
-		#endregion
 
 		#region FunctionalProgramming
 
@@ -270,16 +78,16 @@ namespace EeekSoft.LinqDemos
 			Console.WriteLine("Currying: add10(5) = {0}, add10(32) = {1}", add10(5), add10(32));
 
 			// Using Fold to add all numbers in a sequence 
-			Console.WriteLine("Foldl:    nums.Foldl(add, 0) = {0}", nums.FoldLeft(add, 0));
+			Console.WriteLine("Foldl:    nums.Foldl(add, 0) = {0}", nums.Fold(add, 0));
 			
 			// Using Fold to produce a string
 			var strConcat = Linq.Func((string c, int it) => c + it.ToString() + ", ");
-			Console.WriteLine("Foldl:    nums          = {0}", nums.FoldLeft(strConcat, ""));
+			Console.WriteLine("Foldl:    nums          = {0}", nums.Fold(strConcat, ""));
 
 			// Using Fold to reverse a list
 			var revStep = Linq.Func((Sequence<int> c, int it) => Sequence.Cons(it, c));
 			Console.WriteLine("Foldl:    reversed nums = {0}",
-				nums.FoldLeft(revStep, Sequence.Empty<int>()).FoldLeft(strConcat, ""));
+				nums.Fold(revStep, Sequence.Empty<int>()).Fold(strConcat, ""));
 
 			// Function to recursively produce lazy sequence containing powers of two
 			Func<int, Func<LazySequence<int>>> infN = null;
@@ -289,7 +97,7 @@ namespace EeekSoft.LinqDemos
 			infN = (n) => (() => LazySequence.Cons(n, infN(n * 2)));
 			var infList = infN(1)();
 			Console.WriteLine("\nInfinite list (take 10) = {0}", 
-				infList.Take(10).FoldLeft(strConcat, ""));
+				infList.Take(10).Fold(strConcat, ""));
 		}
 
 		#endregion
@@ -535,43 +343,59 @@ namespace EeekSoft.LinqDemos
 
 			// Dictionary that returns a lambda expression that reads
 			// the property specified by a string (key)
-			var dict = new Dictionary<string, Expression<Func<Customer, string>>> 
+			var dict = new Dictionary<string, CustomerPropSelector> 
 				 { { "CompanyName", c => c.CompanyName },
 					 { "Country",			c => c.Country },
 					 { "ContactName", c => c.ContactName } };
 
 			// Condition that always returns true
-			var trueExpr = Linq.Expr((Customer c) => true);
+			CustomerCondition trueCond = c => true;
 			// Condition that always returns false
-			var falseExpr = Linq.Expr((Customer c) => false);
+			CustomerCondition falseCond = c => false;
+			
 			// Combine two functions using 'or' 
-			var combineOr = Linq.Func
-				((Expression<Func<Customer, bool>> f, Expression<Func<Customer, bool>> g) =>
-					 Linq.Expr((Customer c) => f.Expand(c) || g.Expand(c)));
+			CustomerConditionCombinator combineOr = 
+				(f, g) => (c) => f.Expand(c) || g.Expand(c);
+			
 			// Combine two functions using 'and'
-			var combineAnd = Linq.Func
-				((Expression<Func<Customer, bool>> f, Expression<Func<Customer, bool>> g) =>
-					Linq.Expr((Customer c) => f.Expand(c) && g.Expand(c)));
+			CustomerConditionCombinator combineAnd =
+				(f, g) => (c) => f.Expand(c) && g.Expand(c);
 
 			// Generate expression..
 			Console.Write("Do you want to build 'or' or 'and' query (enter 'or' or 'and')?\n> ");
 			bool generateOr = Console.ReadLine().ToLower() == "or";
+			/*
 			var combinator = generateOr ? combineOr : combineAnd;
-			var expr = generateOr ? falseExpr : trueExpr;
+			var expr = generateOr ? falseCond : trueCond;
 			foreach (var item in dict)
 			{
 				var propSelector = item.Value;
 				Console.Write("Enter value for '{0}':\n> ", item.Key);
 				var enteredVal = Console.ReadLine();
-				var currentExpr = Linq.Expr((Customer c) => propSelector.Expand(c).IndexOf(enteredVal) != -1);
-				expr = combinator(expr, currentExpr);
+				var currentCond = Linq.Expr((Customer c) => propSelector.Expand(c).IndexOf(enteredVal) != -1);
+				expr = combinator(expr, currentCond);
 			}
+			*/
 
+			CustomerCondition isUk = (c) => c.Country == "UK";
+			CustomerCondition isSeattle = (c) => c.City == "Seattle";
+			CustomerCondition expr = combineOr(isUk, isSeattle);
+
+			/*
+			var combinator = generateOr ? combineOr : combineAnd;
+			var expr = dict.Fold((e, item) => {
+					var propSelector = item.Value;
+					Console.Write("Enter value for '{0}':\n> ", item.Key);
+					var enteredVal = Console.ReadLine();
+					CustomerCondition currentCond = (c) => propSelector.Expand(c).IndexOf(enteredVal) != -1;
+					return combinator(e, currentCond); 
+				}, generateOr ? falseCond : trueCond);
+			*/
 			// Now, we can build a query using the generated 'expr'
 			var q =
 				from c in db.Customers.ToExpandable()
-					where expr.Expand(c)
-					select c;
+				where expr.Expand(c) 
+				select c;
 
 			// Execute & print the results
 			foreach (var c in q)

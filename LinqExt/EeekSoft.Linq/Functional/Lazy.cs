@@ -38,6 +38,16 @@ namespace EeekSoft.Functional
 				return this.result;
 			}
 		}
+
+		/// <summary>
+		/// Reset a value to a default. When reading 'Value'
+		/// the computation will be re-executed.
+		/// </summary>
+		public void Reset()
+		{
+			hasValue = false;
+			result = default(T);
+		}
 	}
 
 
