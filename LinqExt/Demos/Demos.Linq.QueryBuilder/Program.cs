@@ -6,7 +6,6 @@ using System.Text;
 using EeekSoft.Query;
 using EeekSoft.Functional;
 using EeekSoft.Expressions;
-using EeekSoft.LinqDemos;
 using System.Linq.Expressions;
 
 namespace Demos.QueryBuilder
@@ -15,22 +14,22 @@ namespace Demos.QueryBuilder
 	// (lambda expression testing if customer matches specified criteria)
 	using CustomerCondition =
 		System.Linq.Expressions.Expression
-			<System.Func<EeekSoft.LinqDemos.Customer, bool>>;
+			<System.Func<Demos.QueryBuilder.Customer, bool>>;
 
 	// Type abbreviation representing a lambda expression that
 	// reads a property of a customer type
 	using CustomerPropSelector =
 		System.Linq.Expressions.Expression
-			<System.Func<EeekSoft.LinqDemos.Customer, string>>;
+			<System.Func<Demos.QueryBuilder.Customer, string>>;
 
 	// Combinator for conditions - takes two conditions
 	// and returns a new one
 	using CustomerConditionCombinator =
 		System.Func
-			<System.Linq.Expressions.Expression<System.Func<EeekSoft.LinqDemos.Customer, bool>>,
-			 System.Linq.Expressions.Expression<System.Func<EeekSoft.LinqDemos.Customer, bool>>,
-			 System.Linq.Expressions.Expression<System.Func<EeekSoft.LinqDemos.Customer, bool>>>;
-
+			<System.Linq.Expressions.Expression<System.Func<Demos.QueryBuilder.Customer, bool>>,
+			 System.Linq.Expressions.Expression<System.Func<Demos.QueryBuilder.Customer, bool>>,
+			 System.Linq.Expressions.Expression<System.Func<Demos.QueryBuilder.Customer, bool>>>;
+	
 	class Program
 	{
 		static void Main(string[] args)

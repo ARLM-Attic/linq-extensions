@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 	ProjectSection(SolutionItems) = preProject
 		Documents\dynamic-queries.html = Documents\dynamic-queries.html
 		Documents\fontform.png = Documents\fontform.png
+		Documents\infiniteseq.html = Documents\infiniteseq.html
 		Documents\lazyvalues.html = Documents\lazyvalues.html
 	EndProjectSection
 EndProject
@@ -22,35 +23,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demos.Functional.Mandel", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demos.Linq.QueryBuilder", "Demos\Demos.Linq.QueryBuilder\Demos.Linq.QueryBuilder.csproj", "{151FC648-BEF6-466F-99B2-CCB2E52894A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demos.Infinite.Intro", "Demos\Demos.Infinite.Intro\Demos.Infinite.Intro.csproj", "{B563A542-39EE-4823-91E0-7395AA917F59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demos.Async", "Demos\Demos.Async\Demos.Async.csproj", "{C4EE43C9-8FA1-4326-A539-58CECFE9A8C6}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs02.codeplex.com/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = EeekSoft.Linq\\EeekSoft.Linq.csproj
-		SccProjectName1 = EeekSoft.Linq
-		SccLocalPath1 = EeekSoft.Linq
-		SccProjectUniqueName2 = EeekSoft.LinqDemos\\EeekSoft.LinqDemos.csproj
-		SccProjectName2 = EeekSoft.LinqDemos
-		SccLocalPath2 = EeekSoft.LinqDemos
-		SccProjectUniqueName3 = Demos\\Demos.Lazy.Intro\\Demos.Lazy.Intro.csproj
-		SccProjectTopLevelParentUniqueName3 = Linq\u0020Extensions.sln
-		SccProjectName3 = Demos/Demos.Lazy.Intro
-		SccLocalPath3 = Demos\\Demos.Lazy.Intro
-		SccProjectUniqueName4 = Demos\\Demos.Lazy.FontList\\Demos.Lazy.FontList.csproj
-		SccProjectTopLevelParentUniqueName4 = Linq\u0020Extensions.sln
-		SccProjectName4 = Demos/Demos.Lazy.FontList
-		SccLocalPath4 = Demos\\Demos.Lazy.FontList
-		SccProjectUniqueName5 = Demos\\Demos.Functional.Mandel\\Demos.Functional.Mandel.csproj
-		SccProjectTopLevelParentUniqueName5 = Linq\u0020Extensions.sln
-		SccProjectName5 = Demos/Demos.Functional.Mandel
-		SccLocalPath5 = Demos\\Demos.Functional.Mandel
-		SccProjectUniqueName6 = Demos\\Demos.Linq.QueryBuilder\\Demos.Linq.QueryBuilder.csproj
-		SccProjectTopLevelParentUniqueName6 = Linq\u0020Extensions.sln
-		SccProjectName6 = Demos/Demos.Linq.QueryBuilder
-		SccLocalPath6 = Demos\\Demos.Linq.QueryBuilder
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -80,6 +57,14 @@ Global
 		{151FC648-BEF6-466F-99B2-CCB2E52894A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{151FC648-BEF6-466F-99B2-CCB2E52894A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{151FC648-BEF6-466F-99B2-CCB2E52894A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B563A542-39EE-4823-91E0-7395AA917F59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B563A542-39EE-4823-91E0-7395AA917F59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B563A542-39EE-4823-91E0-7395AA917F59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B563A542-39EE-4823-91E0-7395AA917F59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4EE43C9-8FA1-4326-A539-58CECFE9A8C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4EE43C9-8FA1-4326-A539-58CECFE9A8C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4EE43C9-8FA1-4326-A539-58CECFE9A8C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4EE43C9-8FA1-4326-A539-58CECFE9A8C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,5 +74,39 @@ Global
 		{6D95542D-A3CF-48AE-8580-DE7BE91ADC36} = {C01682F5-5815-41DA-A04A-09BCD3490804}
 		{3C38034B-9BEC-4E9A-B6FF-CA0B2EF3FD3D} = {C01682F5-5815-41DA-A04A-09BCD3490804}
 		{151FC648-BEF6-466F-99B2-CCB2E52894A1} = {C01682F5-5815-41DA-A04A-09BCD3490804}
+		{B563A542-39EE-4823-91E0-7395AA917F59} = {C01682F5-5815-41DA-A04A-09BCD3490804}
+		{C4EE43C9-8FA1-4326-A539-58CECFE9A8C6} = {C01682F5-5815-41DA-A04A-09BCD3490804}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs02.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = EeekSoft.Linq\\EeekSoft.Linq.csproj
+		SccProjectName1 = EeekSoft.Linq
+		SccLocalPath1 = EeekSoft.Linq
+		SccProjectUniqueName2 = EeekSoft.LinqDemos\\EeekSoft.LinqDemos.csproj
+		SccProjectName2 = EeekSoft.LinqDemos
+		SccLocalPath2 = EeekSoft.LinqDemos
+		SccProjectUniqueName3 = Demos\\Demos.Lazy.Intro\\Demos.Lazy.Intro.csproj
+		SccProjectTopLevelParentUniqueName3 = Linq\u0020Extensions.sln
+		SccProjectName3 = Demos/Demos.Lazy.Intro
+		SccLocalPath3 = Demos\\Demos.Lazy.Intro
+		SccProjectUniqueName4 = Demos\\Demos.Lazy.FontList\\Demos.Lazy.FontList.csproj
+		SccProjectTopLevelParentUniqueName4 = Linq\u0020Extensions.sln
+		SccProjectName4 = Demos/Demos.Lazy.FontList
+		SccLocalPath4 = Demos\\Demos.Lazy.FontList
+		SccProjectUniqueName5 = Demos\\Demos.Functional.Mandel\\Demos.Functional.Mandel.csproj
+		SccProjectTopLevelParentUniqueName5 = Linq\u0020Extensions.sln
+		SccProjectName5 = Demos/Demos.Functional.Mandel
+		SccLocalPath5 = Demos\\Demos.Functional.Mandel
+		SccProjectUniqueName6 = Demos\\Demos.Linq.QueryBuilder\\Demos.Linq.QueryBuilder.csproj
+		SccProjectTopLevelParentUniqueName6 = Linq\u0020Extensions.sln
+		SccProjectName6 = Demos/Demos.Linq.QueryBuilder
+		SccLocalPath6 = Demos\\Demos.Linq.QueryBuilder
+		SccProjectUniqueName7 = Demos\\Demos.Infinite.Intro\\Demos.Infinite.Intro.csproj
+		SccProjectTopLevelParentUniqueName7 = Linq\u0020Extensions.sln
+		SccProjectName7 = Demos/Demos.Infinite.Intro
+		SccLocalPath7 = Demos\\Demos.Infinite.Intro
 	EndGlobalSection
 EndGlobal

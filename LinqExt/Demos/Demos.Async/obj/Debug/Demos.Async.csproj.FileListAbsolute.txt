@@ -1,0 +1,7 @@
+C:\Tomas\Projects\LinqExtensions\LinqExt\Demos\Demos.Async\obj\Debug\ResolveAssemblyReference.cache
+C:\Tomas\Projects\LinqExtensions\LinqExt\Demos\Demos.Async\bin\Debug\Demos.Async.exe
+C:\Tomas\Projects\LinqExtensions\LinqExt\Demos\Demos.Async\bin\Debug\Demos.Async.pdb
+C:\Tomas\Projects\LinqExtensions\LinqExt\Demos\Demos.Async\bin\Debug\EeekSoft.Linq.dll
+C:\Tomas\Projects\LinqExtensions\LinqExt\Demos\Demos.Async\bin\Debug\EeekSoft.Linq.pdb
+C:\Tomas\Projects\LinqExtensions\LinqExt\Demos\Demos.Async\obj\Debug\Demos.Async.exe
+C:\Tomas\Projects\LinqExtensions\LinqExt\Demos\Demos.Async\obj\Debug\Demos.Async.pdb

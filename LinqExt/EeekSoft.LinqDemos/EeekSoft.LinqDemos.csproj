@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.20706</ProductVersion>
+    <ProductVersion>9.0.21004</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{57CF5FD9-513A-4550-91DE-DC54FE1AA363}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -69,6 +69,7 @@
     <None Include="Northwind.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>Northwind.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
