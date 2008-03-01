@@ -74,10 +74,37 @@ namespace EeekSoft.Expressions
 		}
 
 		/// <summary>
+		/// Invoke expression (compile & invoke). If you want to be able to expand
+		/// call to expression you have to use this method for invocation.
+		/// </summary>
+		public static T Expand<A0, A1, T>(this Expression<Func<A0, A1, T>> expr, A0 a0, A1 a1)
+		{
+			return expr.Compile().Invoke(a0, a1);
+		}
+
+		/// <summary>
+		/// Invoke expression (compile & invoke). If you want to be able to expand
+		/// call to expression you have to use this method for invocation.
+		/// </summary>
+		public static T Expand<A0, A1, A2, T>(this Expression<Func<A0, A1, A2, T>> expr, A0 a0, A1 a1, A2 a2)
+		{
+			return expr.Compile().Invoke(a0, a1, a2);
+		}
+
+		/// <summary>
+		/// Invoke expression (compile & invoke). If you want to be able to expand
+		/// call to expression you have to use this method for invocation.
+		/// </summary>
+		public static T Expand<A0, A1, A2, A3, T>(this Expression<Func<A0, A1, A2, A3, T>> expr, A0 a0, A1 a1, A2 a2, A3 a3)
+		{
+			return expr.Compile().Invoke(a0, a1, a2, a3);
+		}
+
+		/// <summary>
 		/// Takes expr and replaces all calls to Expand (extension) method by it's implementation 
 		/// (modifies expression tree)
 		/// </summary>
-		public static Expression<Func<A0, T>> Expand<A0, T>(this Expression<Func<A0, T>> expr)
+		public static Expression<Func<A0, T>> ExpandExpr<A0, T>(this Expression<Func<A0, T>> expr)
 		{
 			return (Expression<Func<A0, T>>)new ExpressionExpander().Visit(expr);
 		}
@@ -86,7 +113,7 @@ namespace EeekSoft.Expressions
 		/// Takes expr and replaces all calls to Expand (extension) method by it's implementation 
 		/// (modifies expression tree)
 		/// </summary>
-		public static Expression<Func<A0, A1, T>> Expand<A0, A1, T>(this Expression<Func<A0, A1, T>> expr)
+		public static Expression<Func<A0, A1, T>> ExpandExpr<A0, A1, T>(this Expression<Func<A0, A1, T>> expr)
 		{
 			return (Expression<Func<A0, A1, T>>)new ExpressionExpander().Visit(expr);
 		}
@@ -95,7 +122,7 @@ namespace EeekSoft.Expressions
 		/// Takes expr and replaces all calls to Expand (extension) method by it's implementation 
 		/// (modifies expression tree)
 		/// </summary>
-		public static Expression ExpandUntyped(this Expression expr)
+		public static Expression ExpandExprUntyped(this Expression expr)
 		{
 			return new ExpressionExpander().Visit(expr);
 		}
@@ -181,10 +208,10 @@ namespace EeekSoft.Expressions
 				for (int i = 0; i < lambda.Parameters.Count; i++)
 				{
 					Expression rep = m.Arguments[i + 1];
-					if ((_replaceVars != null) && (rep is ParameterExpression) && (_replaceVars.ContainsKey((ParameterExpression)rep)))
-						replaceVars.Add(lambda.Parameters[i], _replaceVars[(ParameterExpression)rep]);
-					else
-						replaceVars.Add(lambda.Parameters[i], rep);
+					//if ((_replaceVars != null) && (rep is ParameterExpression) && (_replaceVars.ContainsKey((ParameterExpression)rep)))
+					//	replaceVars.Add(lambda.Parameters[i], _replaceVars[(ParameterExpression)rep]);
+					//else
+					replaceVars.Add(lambda.Parameters[i], this.Visit(rep));
 				}
 				if (_replaceVars != null)
 				{

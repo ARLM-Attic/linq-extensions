@@ -42,12 +42,12 @@ namespace EeekSoft.Query
 
 		public object Execute(Expression expression)
 		{
-			return _item.Provider.Execute(expression.ExpandUntyped());
+			return _item.Provider.Execute(expression.ExpandExprUntyped());
 		}
 
 		public IQueryable<S> CreateQuery<S>(Expression expression)
 		{
-			Expression res = expression.ExpandUntyped();
+			Expression res = expression.ExpandExprUntyped();
 			return new ExpandableWrapper<S>(_item.Provider.CreateQuery<S>(res));
 		}
 

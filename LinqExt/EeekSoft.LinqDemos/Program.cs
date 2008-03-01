@@ -41,7 +41,7 @@ namespace EeekSoft.LinqDemos
 
 	class Program
 	{
-		#region Statements & Monads
+		#region Statements & Monads (Just experiments, ignore this :-) )
 
 		class Attempt<T> 
 		{
@@ -255,8 +255,9 @@ namespace EeekSoft.LinqDemos
 
 			//ParametrizedQueries();
 			//QueryBuilder();
+			DynamicQueryBuilder();
 
-			Asynchronous();
+			//Asynchronous();
 		}
 
 		#region Asynchronous
@@ -398,7 +399,7 @@ namespace EeekSoft.LinqDemos
 
 		  // Now expand the expression
 		  // Expand() is extension method from ExpressionExtensions class
-		  Expression<Func<int, int>> expanded = expr.Expand();
+		  Expression<Func<int, int>> expanded = expr.ExpandExpr();
 
 		  // Print original and expand expression 
 		  // Prints:
@@ -489,7 +490,7 @@ namespace EeekSoft.LinqDemos
 		  // The wrapper created using 'ToExpandable' performs exactly this - it 
 		  // adds 'ExpressionExtension.Expand' to all clauses automatically.
 		  var q_3 = db.Categories.Where(
-		    ExpressionExtensions.Expand((Category c) => 
+		    ExpressionExtensions.ExpandExpr((Category c) => 
 		      selectInfo.Expand(c).AveragePrice > 20.0M));
 		}
 
@@ -638,7 +639,8 @@ namespace EeekSoft.LinqDemos
 		  // Generate expression..
 		  Console.Write("Do you want to build 'or' or 'and' query (enter 'or' or 'and')?\n> ");
 		  bool generateOr = Console.ReadLine().ToLower() == "or";
-		  /*
+		  
+			/*
 		  var combinator = generateOr ? combineOr : combineAnd;
 		  var expr = generateOr ? falseCond : trueCond;
 		  foreach (var item in dict)
@@ -651,11 +653,6 @@ namespace EeekSoft.LinqDemos
 		  }
 		  */
 
-		  CustomerCondition isUk = (c) => c.Country == "UK";
-		  CustomerCondition isSeattle = (c) => c.City == "Seattle";
-		  CustomerCondition expr = combineOr(isUk, isSeattle);
-
-		  /*
 		  var combinator = generateOr ? combineOr : combineAnd;
 		  var expr = dict.Fold((e, item) => {
 		      var propSelector = item.Value;
@@ -664,7 +661,7 @@ namespace EeekSoft.LinqDemos
 		      CustomerCondition currentCond = (c) => propSelector.Expand(c).IndexOf(enteredVal) != -1;
 		      return combinator(e, currentCond); 
 		    }, generateOr ? falseCond : trueCond);
-		  */
+		  
 		  // Now, we can build a query using the generated 'expr'
 		  var q =
 		    from c in db.Customers.ToExpandable()
@@ -674,6 +671,120 @@ namespace EeekSoft.LinqDemos
 		  // Execute & print the results
 		  foreach (var c in q)
 		    Console.WriteLine("{0,-30}{1,-30}{2}", c.CompanyName, c.ContactName, c.Country);
+		}
+
+		#endregion
+
+		#region QueryBuilder Generic
+
+		// Base class that represents any selector for given table
+		abstract class GenericSelector<TTable>
+		{
+			// Not type-safe version of the condition (because the property value is 
+			// passed as an object), but it can be used if you need to store multiple
+			// selectors in a collection (e.g. all properties for a specified table).
+			public abstract Expression<Func<TTable, bool>> If(Expression<Func<object, bool>> cond);
+
+			// This allows us to dynamically test what is the type of selector 
+			// (e.g. when we need to ask user for a value of this type)
+			public abstract Type PropertyType { get; }
+		}
+
+		// Represents a piece of code/expression that selects a property value 
+		// (of type TPropType) from a database table (of type TTable)
+		class GenericSelector<TTable, TPropType> : GenericSelector<TTable>
+		{
+			Expression<Func<TTable, TPropType>> _selector;
+
+			public GenericSelector(Expression<Func<TTable, TPropType>> selector)
+			{
+				_selector = selector;
+			}
+
+			// Creates a condition that tests whether specified value selected
+			// using GenericSelector matches the specified condition
+			public Expression<Func<TTable,bool>> If(Expression<Func<TPropType, bool>> cond)
+			{
+				return (t) => cond.Expand(_selector.Expand(t));
+			}
+
+			public override Expression<Func<TTable, bool>> If(Expression<Func<object, bool>> cond)
+			{
+				return If((v) => cond.Expand(v));
+			}
+
+			public override Type PropertyType { get { return typeof(TPropType); } }
+		}
+
+		private static void DynamicQueryBuilder()
+		{
+			Console.WriteLine("\n\n=== [ Dynamic Query builder ] ===");
+			NorthwindDataContext db = new NorthwindDataContext();
+
+			// these have to be built statically at design time, however it
+			// is possible to place them in collections (etc.) similarly to the
+			// previous example
+			var selCategory = new GenericSelector<Category, string>(c => c.CategoryName);
+			var selPrice = new GenericSelector<Product, decimal?>(p => p.UnitPrice);
+
+			
+			// ----------
+			// EXAMPLE #1: Combine some conditions of different types from different tables
+
+			// build some conditions 
+			var e1 = selCategory.If(s => s == "Beverages");
+			var e2 = selPrice.If(p => p >= 15M);
+
+			// combine the conditions
+			var expr = Linq.Expr((Category c, Product p) => e1.Expand(c) && e2.Expand(p));
+			
+			// run the query
+			var q =
+				from c in db.Categories.ToExpandable()
+				from p in c.Products
+				where expr.Expand(c, p)
+				select p;
+
+			// Execute & print the results
+			foreach (var p in q)
+				Console.WriteLine("{0,-30}{1,-30}", p.ProductName, p.UnitPrice);
+
+			// ----------
+			// EXAMPLE #2: Using GenericSelector<TTable> base class...
+			Console.WriteLine("\nExample #2 (various conditions combined using OR):");
+
+			var conds = new Dictionary<string, GenericSelector<Product>> { 
+				{ "Product name", new GenericSelector<Product, string>(p => p.ProductName) },
+				{ "Unit price", new GenericSelector<Product, decimal?>(p => p.UnitPrice) } };
+			
+			var trueCond = Linq.Expr((Product _) => false);
+			var expr2 = conds.Aggregate(trueCond, (e, item) =>
+			{
+				Console.Write("Enter value for '{0}': ", item.Key);
+				string val = Console.ReadLine();
+
+				// This needs to be replaced with some more complex method for parsing user input
+				// - it needs to support various types that user may input when building the condition
+				Expression<Func<Product, bool>> newExpr;
+				if (item.Value.PropertyType == typeof(string)) 
+					newExpr = item.Value.If(o => (string)o == val);
+				else if (item.Value.PropertyType == typeof(decimal?)) 
+					newExpr = item.Value.If(o => (decimal?)o >= Decimal.Parse(val));
+				else throw new NotSupportedException();
+
+				return Linq.Expr((Product p) => e.Expand(p) || newExpr.Expand(p));
+			});
+
+			// run the query
+			var q2 =
+				from p in db.Products.ToExpandable()
+				where expr2.Expand(p)
+				select p;
+
+			// Execute & print the results
+			foreach (var p in q2)
+				Console.WriteLine("{0,-30}{1,-30}", p.ProductName, p.UnitPrice);
+
 		}
 
 		#endregion
